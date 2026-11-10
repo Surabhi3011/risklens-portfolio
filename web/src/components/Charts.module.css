@@ -1,0 +1,41 @@
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.875rem 1rem;
+}
+
+.figure {
+  margin: 0;
+  min-width: 0;
+}
+
+.figure + .figure {
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--line);
+}
+
+.caption {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+.title {
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.sub {
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.key {
+  display: inline-block;
+  width: 0.625rem;
+  height: 0.625rem;
+  margin-left: 0.25rem;
+  border-radius: 2px;
+  vertical-align: -1px;
+}

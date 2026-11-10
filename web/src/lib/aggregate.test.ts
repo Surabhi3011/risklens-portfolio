@@ -1,6 +1,9 @@
+import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import type { Asset } from '../types';
-import { computeKpis } from './aggregate';
+import { bandDistribution, complianceTimeline, computeKpis } from './aggregate';
+import { parseRules } from './loadData';
 
 function asset(over: {
   band?: Asset['epc']['band_current'];
@@ -19,7 +22,7 @@ function asset(over: {
     tenure: 'rented',
     match_level: 'uprn',
     epc: {
-      band_current: over.band ?? 'C',
+      band_current: over.band === undefined ? 'C' : over.band,
       band_potential: null,
       score_current: null,
       floor_area_m2: null,
@@ -61,5 +64,51 @@ describe('computeKpis', () => {
     expect(k.upgradeCostUnknown).toBe(2);
     expect(k.valueExposed).toBe(500_000);
     expect(k.valueUnknown).toBe(1);
+  });
+});
+
+describe('bandDistribution', () => {
+  it('returns A-G in order and appends No EPC only when present', () => {
+    const rows = bandDistribution([asset({ band: 'D' }), asset({ band: 'D' }), asset({ band: 'A' })]);
+    expect(rows.map((r) => r.label)).toEqual(['A', 'B', 'C', 'D', 'E', 'F', 'G']);
+    expect(rows.find((r) => r.band === 'D')?.count).toBe(2);
+    expect(rows.find((r) => r.band === 'D')?.belowC).toBe(true);
+    const withNone = bandDistribution([asset({ band: null })]);
+    expect(withNone.at(-1)).toMatchObject({ label: 'No EPC', count: 1 });
+  });
+});
+
+describe('complianceTimeline', () => {
+  const rules = parseRules(
+    JSON.parse(readFileSync(fileURLToPath(new URL('../../public/config/rules.json', import.meta.url)), 'utf-8')),
+  );
+
+  it('labels milestones from rules.json, with the announced 2031 rule as year only', () => {
+    const ms = complianceTimeline([], rules);
+    expect(ms.map((m) => [m.label, m.announced])).toEqual([
+      ['Today', false],
+      ['Oct 2030', false],
+      ['2031', true],
+    ]);
+  });
+
+  it('accumulates current failures and rule deadlines', () => {
+    const res = (band: Asset['epc']['band_current'], status: Asset['compliance']['status']): Asset =>
+      asset({ band, status });
+    const big = (band: Asset['epc']['band_current']): Asset => {
+      const a = asset({ band, status: 'fails_future' });
+      return { ...a, use: 'commercial', epc: { ...a.epc, floor_area_m2: 1500 } };
+    };
+    const ms = complianceTimeline(
+      [
+        res('F', 'fails_current'), // failing today
+        res(null, 'no_epc'), // failing today
+        res('D', 'fails_future'), // fails the 2030 residential C rule
+        res('C', 'compliant'), // never fails
+        big('C'), // fails the 2031 commercial B rule (>= 1000 m2)
+      ],
+      rules,
+    );
+    expect(ms.map((m) => m.count)).toEqual([2, 3, 4]);
   });
 });

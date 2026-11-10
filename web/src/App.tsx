@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import styles from './App.module.css';
+import { ChartsPanel } from './components/ChartsPanel';
 import { Footer } from './components/Footer';
 import { Header } from './components/Header';
 import { KpiRow } from './components/KpiRow';
@@ -34,7 +35,7 @@ export default function App() {
                 <RiskMap assets={assets} selectedId={selectedId} onSelect={select} />
               </section>
               <section className={styles.chartPanel} aria-label="Charts">
-                <p className={styles.placeholder}>EPC bands and compliance timeline (P2.5)</p>
+                {rules && <ChartsPanel assets={assets} rules={rules} />}
               </section>
             </div>
             <section className={styles.tablePanel} aria-label="Assets">

@@ -62,7 +62,7 @@ export function bandFails(band: Band, minBand: Band): boolean {
   return BANDS.indexOf(band) > BANDS.indexOf(minBand);
 }
 
-function ruleApplies(rule: Rule, a: ScoreInput): boolean {
+export function ruleApplies(rule: Rule, a: Pick<ScoreInput, 'use' | 'tenure' | 'floor_area_m2'>): boolean {
   if (rule.use !== a.use || rule.tenure !== a.tenure) return false;
   if (rule.min_floor_area_m2 !== undefined) {
     // Unknown floor area: we can't show the size threshold is met, so the rule doesn't apply.
