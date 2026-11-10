@@ -3,6 +3,7 @@ import styles from './App.module.css';
 import { Footer } from './components/Footer';
 import { Header } from './components/Header';
 import { KpiRow } from './components/KpiRow';
+import { RiskMap } from './components/RiskMap';
 import { usePortfolioStore } from './state/portfolioStore';
 
 export default function App() {
@@ -10,6 +11,8 @@ export default function App() {
   const assets = usePortfolioStore((s) => s.assets);
   const rules = usePortfolioStore((s) => s.rules);
   const init = usePortfolioStore((s) => s.init);
+  const selectedId = usePortfolioStore((s) => s.selectedId);
+  const select = usePortfolioStore((s) => s.select);
 
   useEffect(() => {
     void init();
@@ -28,7 +31,7 @@ export default function App() {
             <KpiRow assets={assets} />
             <div className={styles.grid}>
               <section className={styles.mapPanel} aria-label="Risk map">
-                <p className={styles.placeholder}>Risk map (P2.4)</p>
+                <RiskMap assets={assets} selectedId={selectedId} onSelect={select} />
               </section>
               <section className={styles.chartPanel} aria-label="Charts">
                 <p className={styles.placeholder}>EPC bands and compliance timeline (P2.5)</p>

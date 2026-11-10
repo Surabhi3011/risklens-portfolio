@@ -8,6 +8,8 @@ const base = process.env.VITE_BASE ?? '/';
 export default defineConfig({
   base,
   plugins: [react()],
+  // Serve MapLibre's own ESM files in dev (as in production). Pre-bundling it breaks the main-thread/worker pairing.
+  optimizeDeps: { exclude: ['maplibre-gl'] },
   build: {
     target: 'es2022',
     chunkSizeWarningLimit: 1200,

@@ -42,7 +42,7 @@ Three phases, roughly one week each, part-time. Work top to bottom. Each task ha
 - [x] **P2.2 Scoring parity.** Write `lib/scoring.ts` and a vitest that runs `scoring_cases.json`.
   - Done when the same results come out as in Python.
 - [x] **P2.3 Layout and KPI row.** Build the header, KPI row (assets, % below C, % in Flood Zone 3, indicative upgrade budget, value exposed) and footer with the full disclaimer and attributions (§7).
-- [ ] **P2.4 Risk map.** Use the OpenFreeMap muted style with points coloured by tier and labelled in the legend. Add WMS toggles for RoFRS, Flood Zones and RoFSW, and visible OSM attribution.
+- [x] **P2.4 Risk map.** Use the OpenFreeMap muted style with points coloured by tier and labelled in the legend. Add WMS toggles for RoFRS, Flood Zones and RoFSW, and visible OSM attribution.
   - Done when the toggles work and clicking a point selects the asset.
 - [ ] **P2.5 Charts.** Add the EPC band distribution (bar, bands A–G in order) and the compliance timeline (non-compliant counts at today, Oct 2030 and 2031, with 2031 labelled "announced").
 - [ ] **P2.6 Filters and table.** Filter by LA, use, band and tier, applied to the map, charts, KPIs and table together. Make the table sortable.
