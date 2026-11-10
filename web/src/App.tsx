@@ -6,6 +6,7 @@ import { Filters } from './components/Filters';
 import { Footer } from './components/Footer';
 import { Header } from './components/Header';
 import { KpiRow } from './components/KpiRow';
+import { SummaryCard } from './components/SummaryCard';
 import { UploadBanner } from './components/UploadBanner';
 import { UploadDialog } from './components/UploadDialog';
 import { buildCsv, downloadBlob, downloadText, exportFileName } from './lib/exportCsv';
@@ -126,6 +127,7 @@ export default function App() {
               onReset={resetFilters}
             />
             <KpiRow assets={visible} />
+            <SummaryCard assets={visible} rules={rules} />
             <div className={styles.grid}>
               <section className={styles.mapPanel} aria-label="Risk map">
                 <Suspense fallback={<p className={styles.placeholder}>Loading map…</p>}>
