@@ -1,15 +1,17 @@
-import { useEffect, useMemo } from 'react';
+import { lazy, Suspense, useEffect, useMemo } from 'react';
 import styles from './App.module.css';
 import { AssetDrawer } from './components/AssetDrawer';
 import { AssetTable } from './components/AssetTable';
-import { ChartsPanel } from './components/ChartsPanel';
 import { Filters } from './components/Filters';
 import { Footer } from './components/Footer';
 import { Header } from './components/Header';
 import { KpiRow } from './components/KpiRow';
-import { RiskMap } from './components/RiskMap';
 import { filterAssets } from './lib/filters';
 import { usePortfolioStore } from './state/portfolioStore';
+
+// MapLibre and ECharts are the heaviest dependencies: load them after the KPIs and table are on screen.
+const RiskMap = lazy(() => import('./components/RiskMap').then((m) => ({ default: m.RiskMap })));
+const ChartsPanel = lazy(() => import('./components/ChartsPanel').then((m) => ({ default: m.ChartsPanel })));
 
 export default function App() {
   const load = usePortfolioStore((s) => s.load);
@@ -35,6 +37,9 @@ export default function App() {
 
   return (
     <div className={styles.shell}>
+      <a className={styles.skip} href="#asset-table">
+        Skip to asset table
+      </a>
       <Header asOf={rules?.as_of ?? null} />
       <main className={styles.main}>
         <div aria-live="polite">
@@ -53,13 +58,17 @@ export default function App() {
             <KpiRow assets={visible} />
             <div className={styles.grid}>
               <section className={styles.mapPanel} aria-label="Risk map">
-                <RiskMap assets={visible} selectedId={selectedId} onSelect={select} />
+                <Suspense fallback={<p className={styles.placeholder}>Loading map…</p>}>
+                  <RiskMap assets={visible} selectedId={selectedId} onSelect={select} />
+                </Suspense>
               </section>
               <section className={styles.chartPanel} aria-label="Charts">
-                <ChartsPanel assets={visible} rules={rules} />
+                <Suspense fallback={<p className={styles.placeholder}>Loading charts…</p>}>
+                  <ChartsPanel assets={visible} rules={rules} />
+                </Suspense>
               </section>
             </div>
-            <section className={styles.tablePanel} aria-label="Assets">
+            <section className={styles.tablePanel} aria-label="Assets" id="asset-table" tabIndex={-1}>
               <AssetTable
                 assets={visible}
                 rules={rules}

@@ -60,6 +60,8 @@ export function RiskMap({ assets, selectedId, onSelect }: RiskMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MlMap | null>(null);
   const [ready, setReady] = useState(false);
+  // Legend starts open on the desktop layout and collapsed on tablet/phone, so it doesn't cover the map.
+  const [legendOpen, setLegendOpen] = useState(() => window.matchMedia('(min-width: 901px)').matches);
   const [overlays, setOverlays] = useState<Record<FloodOverlay['id'], boolean>>({
     rofrs: false,
     zones: false,
@@ -117,15 +119,9 @@ export function RiskMap({ assets, selectedId, onSelect }: RiskMapProps) {
         type: 'circle',
         source: ASSET_SOURCE,
         paint: {
-          'circle-color': [
-            'match',
-            ['get', 'tier'],
-            'act',
-            TIER_COLOUR.act,
-            'watch',
-            TIER_COLOUR.watch,
-            TIER_COLOUR.low,
-          ],
+          // Tier is shown by fill style as well as colour (never colour alone):
+          // act = solid with dark outline, watch = solid with white outline, low = hollow ring.
+          'circle-color': ['match', ['get', 'tier'], 'act', TIER_COLOUR.act, 'watch', TIER_COLOUR.watch, '#ffffff'],
           // Radius scales lightly with value (0 to about £3m).
           'circle-radius': [
             'interpolate',
@@ -136,9 +132,9 @@ export function RiskMap({ assets, selectedId, onSelect }: RiskMapProps) {
             3_000_000,
             9,
           ],
-          'circle-stroke-color': '#ffffff',
-          'circle-stroke-width': 1.25,
-          'circle-opacity': 0.9,
+          'circle-stroke-color': ['match', ['get', 'tier'], 'act', '#1d2329', 'watch', '#ffffff', TIER_COLOUR.low],
+          'circle-stroke-width': ['match', ['get', 'tier'], 'act', 2, 'watch', 1.25, 2.25],
+          'circle-opacity': 0.95,
         },
       });
       map.addLayer({
@@ -166,7 +162,9 @@ export function RiskMap({ assets, selectedId, onSelect }: RiskMapProps) {
       });
 
       const b = boundsOf(initialAssets.current);
-      if (b) map.fitBounds(b, { padding: 40, duration: 0 });
+      // Leave room on the left for the legend panel on wider maps.
+      const wide = map.getContainer().clientWidth > 600;
+      if (b) map.fitBounds(b, { padding: { top: 40, bottom: 40, right: 50, left: wide ? 220 : 40 }, duration: 0 });
       setReady(true);
     });
 
@@ -205,18 +203,26 @@ export function RiskMap({ assets, selectedId, onSelect }: RiskMapProps) {
         role="region"
         aria-label="Map of portfolio assets coloured by risk tier. Use the asset table for keyboard access."
       />
-      <div className={styles.panel}>
+      <details
+        className={styles.panel}
+        open={legendOpen}
+        onToggle={(e) => {
+          setLegendOpen(e.currentTarget.open);
+        }}
+      >
+        <summary className={styles.summary}>Legend and layers</summary>
         <fieldset className={styles.group}>
           <legend className={styles.legendTitle}>Risk tier</legend>
           <ul className={styles.tiers}>
             {TIER_ORDER.map((t) => (
               <li key={t} className={styles.tierItem}>
-                <span className={styles.swatch} style={{ background: TIER_COLOUR[t] }} aria-hidden="true" />
+                <span className={`${styles.swatch} ${styles[`swatch_${t}`] ?? ''}`} aria-hidden="true" />
                 <span>{TIER_LABEL[t]}</span>
                 <span className={styles.count}>{tierCounts[t]}</span>
               </li>
             ))}
           </ul>
+          <p className={styles.hint}>Point size reflects value</p>
         </fieldset>
         {selected && (
           <p className={styles.selected} data-testid="map-selected">
@@ -238,7 +244,7 @@ export function RiskMap({ assets, selectedId, onSelect }: RiskMapProps) {
             </label>
           ))}
         </fieldset>
-      </div>
+      </details>
     </div>
   );
 }

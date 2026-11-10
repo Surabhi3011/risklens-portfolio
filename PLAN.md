@@ -47,7 +47,7 @@ Three phases, roughly one week each, part-time. Work top to bottom. Each task ha
 - [x] **P2.5 Charts.** Add the EPC band distribution (bar, bands A–G in order) and the compliance timeline (non-compliant counts at today, Oct 2030 and 2031, with 2031 labelled "announced").
 - [x] **P2.6 Filters and table.** Filter by LA, use, band and tier, applied to the map, charts, KPIs and table together. Make the table sortable.
 - [x] **P2.7 Asset drawer.** Show current vs potential band, the failing rule and its deadline, flood bands, the top 3 recommendations with indicative costs, match level, and EPC age.
-- [ ] **P2.8 Design pass.**
+- [x] **P2.8 Design pass.**
   - Calm, institutional styling.
   - Readable at 375 px.
   - Keyboard access to the table and drawer.
