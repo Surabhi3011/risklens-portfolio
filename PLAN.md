@@ -37,7 +37,7 @@ Three phases, roughly one week each, part-time. Work top to bottom. Each task ha
 
 ## Phase 2 — Dashboard (week 2)
 
-- [ ] **P2.1 Scaffold web app.** Set up Vite + React + TS (strict), ESLint, vitest, MapLibre, ECharts and Zustand. Load `rules.json` and the GeoJSON.
+- [x] **P2.1 Scaffold web app.** Set up Vite + React + TS (strict), ESLint, vitest, MapLibre, ECharts and Zustand. Load `rules.json` and the GeoJSON.
   - Done when `npm run build` passes and the asset count shows on the page.
 - [ ] **P2.2 Scoring parity.** Write `lib/scoring.ts` and a vitest that runs `scoring_cases.json`.
   - Done when the same results come out as in Python.

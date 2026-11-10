@@ -1,0 +1,55 @@
+.shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--line);
+  background: var(--surface);
+}
+
+.brand {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.tagline {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--muted);
+}
+
+.main {
+  flex: 1;
+  padding: 1.5rem;
+}
+
+.count {
+  font-size: 2rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.meta {
+  color: var(--muted);
+  margin: 0.25rem 0 0;
+}
+
+.error {
+  color: var(--red);
+}
+
+@media (max-width: 600px) {
+  .header,
+  .main {
+    padding: 1rem;
+  }
+}

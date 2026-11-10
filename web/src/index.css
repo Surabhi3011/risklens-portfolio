@@ -1,0 +1,26 @@
+:root {
+  --bg: #f6f7f8;
+  --surface: #ffffff;
+  --text: #1d2329;
+  --muted: #5b6670;
+  --line: #dde2e6;
+  --accent: #1f5f8b;
+  --green: #2e7d4f;
+  --amber: #b26a00;
+  --red: #b3261e;
+  --grey: #8a949c;
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  color: var(--text);
+  background: var(--bg);
+  line-height: 1.5;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
