@@ -8,8 +8,4 @@ echarts.use([BarChart, GridComponent, TooltipComponent, MarkLineComponent, Canva
 
 export { echarts };
 
-export const CHART_TEXT = {
-  color: '#5b6670',
-  fontFamily: "system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
-  fontSize: 12,
-} as const;
+export { CHART_TEXT } from './chartOptions';

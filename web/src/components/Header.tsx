@@ -5,9 +5,12 @@ interface HeaderProps {
   asOf: string | null;
   uploaded?: boolean;
   onUpload?: () => void;
+  onExportCsv?: () => void;
+  onExportPdf?: () => void;
+  exporting?: boolean;
 }
 
-export function Header({ asOf, uploaded = false, onUpload }: HeaderProps) {
+export function Header({ asOf, uploaded = false, onUpload, onExportCsv, onExportPdf, exporting = false }: HeaderProps) {
   return (
     <header className={styles.header}>
       <div className={styles.titles}>
@@ -17,6 +20,20 @@ export function Header({ asOf, uploaded = false, onUpload }: HeaderProps) {
       <div className={styles.meta}>
         <span className={styles.badge}>{uploaded ? 'Uploaded portfolio' : 'Demo portfolio'}</span>
         {asOf && <span className={styles.asOf}>Rules as of {asOf}</span>}
+        {(onExportCsv ?? onExportPdf) && (
+          <span className={styles.group} role="group" aria-label="Export the current selection">
+            {onExportCsv && (
+              <button type="button" className={styles.secondary} onClick={onExportCsv}>
+                Export CSV
+              </button>
+            )}
+            {onExportPdf && (
+              <button type="button" className={styles.secondary} onClick={onExportPdf} disabled={exporting}>
+                {exporting ? 'Building PDF…' : 'Export PDF'}
+              </button>
+            )}
+          </span>
+        )}
         {onUpload && (
           <button type="button" className={styles.action} onClick={onUpload}>
             Upload portfolio

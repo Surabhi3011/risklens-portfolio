@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { Asset } from '../types';
-import { filterAssets, isFiltered, NO_FILTERS, sortAssets } from './filters';
+import { describeFilters, filterAssets, isFiltered, NO_FILTERS, sortAssets } from './filters';
 
 function mk(id: string, over: Partial<Pick<Asset, 'la_code' | 'use' | 'tier' | 'value_gbp'>> & { band?: Asset['epc']['band_current'] }): Asset {
   return {
@@ -67,5 +67,15 @@ describe('sortAssets', () => {
 
   it('sorts bands A-G with missing bands last', () => {
     expect(sortAssets(assets, 'band', 'asc').map((a) => a.epc.band_current)).toEqual(['B', 'D', null]);
+  });
+});
+
+describe('describeFilters', () => {
+  const labels = { act: 'Act now', watch: 'Watch', low: 'Low' } as const;
+  it('summarises active filters', () => {
+    expect(describeFilters(NO_FILTERS, new Map(), labels)).toBe('All assets');
+    expect(describeFilters({ ...NO_FILTERS, la: 'E06000014', tier: 'act', band: 'none' }, new Map([['E06000014', 'York']]), labels)).toBe(
+      'Local authority: York · EPC band: No EPC · Risk tier: Act now',
+    );
   });
 });

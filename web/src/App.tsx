@@ -8,7 +8,9 @@ import { Header } from './components/Header';
 import { KpiRow } from './components/KpiRow';
 import { UploadBanner } from './components/UploadBanner';
 import { UploadDialog } from './components/UploadDialog';
-import { filterAssets } from './lib/filters';
+import { buildCsv, downloadBlob, downloadText, exportFileName } from './lib/exportCsv';
+import { describeFilters, filterAssets } from './lib/filters';
+import { TIER_LABEL } from './lib/tiers';
 import type { PortfolioRow } from './lib/validateUpload';
 import { usePortfolioStore } from './state/portfolioStore';
 
@@ -34,6 +36,7 @@ export default function App() {
   const backToDemo = usePortfolioStore((s) => s.backToDemo);
 
   const [uploadOpen, setUploadOpen] = useState(false);
+  const [exporting, setExporting] = useState(false);
 
   useEffect(() => {
     void init();
@@ -49,7 +52,36 @@ export default function App() {
       });
   }, [uploadOpen]);
 
+  // One filtered list drives the KPIs, map, charts and table together.
+  const visible = useMemo(() => filterAssets(assets, filters), [assets, filters]);
+  // Look up the selection in the full list so the drawer stays open if a filter later hides the asset.
+  const selectedAsset = useMemo(() => assets.find((a) => a.asset_id === selectedId) ?? null, [assets, selectedId]);
+
   const laNames = useMemo(() => new Map(demoAssets.map((a) => [a.la_code, a.la_name])), [demoAssets]);
+
+  const sourceLabel = source.kind === 'upload' ? `Uploaded: ${source.fileName}` : 'Demo portfolio';
+
+  const exportCsv = (): void => {
+    if (!rules) return;
+    downloadText(buildCsv(visible, rules), exportFileName('assets', 'csv'), 'text/csv');
+  };
+
+  const exportPdf = async (): Promise<void> => {
+    if (!rules) return;
+    setExporting(true);
+    try {
+      const { buildSummaryPdf } = await import('./lib/exportPdf');
+      const doc = buildSummaryPdf({
+        assets: visible,
+        rules,
+        sourceLabel,
+        filterLabel: describeFilters(filters, laNames, TIER_LABEL),
+      });
+      downloadBlob(doc.output('blob'), exportFileName('summary', 'pdf'));
+    } finally {
+      setExporting(false);
+    }
+  };
 
   const enrich = async (rows: PortfolioRow[], fileName: string): Promise<void> => {
     if (!rules) throw new Error('Rules are not loaded yet.');
@@ -59,11 +91,6 @@ export default function App() {
     setUploadOpen(false);
   };
 
-  // One filtered list drives the KPIs, map, charts and table together.
-  const visible = useMemo(() => filterAssets(assets, filters), [assets, filters]);
-  // Look up the selection in the full list so the drawer stays open if a filter later hides the asset.
-  const selectedAsset = useMemo(() => assets.find((a) => a.asset_id === selectedId) ?? null, [assets, selectedId]);
-
   return (
     <div className={styles.shell}>
       <a className={styles.skip} href="#asset-table">
@@ -72,6 +99,11 @@ export default function App() {
       <Header
         asOf={rules?.as_of ?? null}
         uploaded={source.kind === 'upload'}
+        exporting={exporting}
+        onExportCsv={exportCsv}
+        onExportPdf={() => {
+          void exportPdf();
+        }}
         onUpload={() => {
           setUploadOpen(true);
         }}

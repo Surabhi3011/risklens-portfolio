@@ -183,7 +183,8 @@ export function RiskMap({ assets, selectedId, onSelect }: RiskMapProps) {
   // Highlight the selected asset.
   useEffect(() => {
     const map = mapRef.current;
-    if (ready && map) map.setFilter(SELECTED_LAYER, ['==', ['get', 'asset_id'], selectedId ?? '']);
+    // Guard on the layer too: after a hot reload the map is rebuilt while `ready` may still be true.
+    if (ready && map?.getLayer(SELECTED_LAYER)) map.setFilter(SELECTED_LAYER, ['==', ['get', 'asset_id'], selectedId ?? '']);
   }, [selectedId, ready]);
 
   // Flood overlay visibility.
@@ -191,7 +192,9 @@ export function RiskMap({ assets, selectedId, onSelect }: RiskMapProps) {
     const map = mapRef.current;
     if (!ready || !map) return;
     for (const o of FLOOD_OVERLAYS) {
-      map.setLayoutProperty(overlayLayerId(o), 'visibility', overlays[o.id] ? 'visible' : 'none');
+      if (map.getLayer(overlayLayerId(o))) {
+        map.setLayoutProperty(overlayLayerId(o), 'visibility', overlays[o.id] ? 'visible' : 'none');
+      }
     }
   }, [overlays, ready]);
 

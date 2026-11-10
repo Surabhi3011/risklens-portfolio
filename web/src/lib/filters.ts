@@ -72,3 +72,13 @@ export function sortAssets<T extends Asset>(assets: readonly T[], key: SortKey, 
     return c !== 0 ? sign * c : x.asset_id.localeCompare(y.asset_id);
   });
 }
+
+/** Human-readable filter summary for exports, e.g. "Local authority: York · Risk tier: Act now". */
+export function describeFilters(f: Filters, laNames: ReadonlyMap<string, string>, tierLabels: Record<Tier, string>): string {
+  const parts: string[] = [];
+  if (f.la !== 'all') parts.push(`Local authority: ${laNames.get(f.la) ?? f.la}`);
+  if (f.use !== 'all') parts.push(`Use: ${f.use === 'residential' ? 'Residential' : 'Commercial'}`);
+  if (f.band !== 'all') parts.push(`EPC band: ${f.band === 'none' ? 'No EPC' : f.band}`);
+  if (f.tier !== 'all') parts.push(`Risk tier: ${tierLabels[f.tier]}`);
+  return parts.length === 0 ? 'All assets' : parts.join(' · ');
+}
