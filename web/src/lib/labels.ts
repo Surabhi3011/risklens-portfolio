@@ -1,5 +1,5 @@
 // Human-readable labels shared by the table, drawer and exports.
-import type { Asset, ComplianceStatus, FloodZone, Likelihood, Rules } from '../types';
+import type { Asset, ComplianceStatus, FloodZone, Likelihood, Rule, Rules } from '../types';
 import { milestoneLabel } from './aggregate';
 
 export const STATUS_LABEL: Record<ComplianceStatus, string> = {
@@ -30,4 +30,38 @@ export function deadlineText(a: Asset, rules: Rules): string {
   const rule = rules.rules.find((r) => r.id === id);
   const announced = rule?.status === 'announced';
   return `${milestoneLabel(a.compliance.deadline, announced)}${announced ? ' (announced)' : ''}`;
+}
+
+export const RULE_STATUS_LABEL: Record<Rule['status'], string> = {
+  in_force: 'In force',
+  confirmed_policy: 'Confirmed policy',
+  announced: 'Announced, subject to legislation',
+};
+
+/** Plain-English description of a rule from rules.json, e.g. "Domestic rented: minimum EPC C". */
+export function ruleDescription(rule: Rule): string {
+  const scope = rule.use === 'residential' ? 'Domestic' : 'Non-domestic';
+  const area = rule.min_floor_area_m2 !== undefined ? ` (${String(rule.min_floor_area_m2)} m² and over)` : '';
+  return `${scope} rented${area}: minimum EPC ${rule.min_band}`;
+}
+
+export const MATCH_LABEL: Record<Asset['match_level'], string> = {
+  uprn: 'Matched by UPRN',
+  postcode: 'Postcode-level estimate',
+  none: 'Not matched to an EPC',
+};
+
+/** Whole years plus months between an ISO lodgement date and as_of, e.g. "3 years 2 months". */
+export function epcAge(lodgementDate: string | null, asOf: string): string | null {
+  if (!lodgementDate) return null;
+  const [ly, lm, ld] = lodgementDate.slice(0, 10).split('-').map(Number) as [number, number, number];
+  const [ay, am, ad] = asOf.slice(0, 10).split('-').map(Number) as [number, number, number];
+  let months = (ay - ly) * 12 + (am - lm) - (ad < ld ? 1 : 0);
+  if (months < 0) months = 0;
+  const y = Math.floor(months / 12);
+  const m = months % 12;
+  const ys = y === 1 ? '1 year' : `${String(y)} years`;
+  const ms = m === 1 ? '1 month' : `${String(m)} months`;
+  if (y === 0) return ms;
+  return m === 0 ? ys : `${ys} ${ms}`;
 }

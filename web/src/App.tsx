@@ -1,5 +1,6 @@
 import { useEffect, useMemo } from 'react';
 import styles from './App.module.css';
+import { AssetDrawer } from './components/AssetDrawer';
 import { AssetTable } from './components/AssetTable';
 import { ChartsPanel } from './components/ChartsPanel';
 import { Filters } from './components/Filters';
@@ -29,6 +30,8 @@ export default function App() {
 
   // One filtered list drives the KPIs, map, charts and table together.
   const visible = useMemo(() => filterAssets(assets, filters), [assets, filters]);
+  // Look up the selection in the full list so the drawer stays open if a filter later hides the asset.
+  const selectedAsset = useMemo(() => assets.find((a) => a.asset_id === selectedId) ?? null, [assets, selectedId]);
 
   return (
     <div className={styles.shell}>
@@ -69,6 +72,15 @@ export default function App() {
           </>
         )}
       </main>
+      {selectedAsset && rules && (
+        <AssetDrawer
+          asset={selectedAsset}
+          rules={rules}
+          onClose={() => {
+            select(null);
+          }}
+        />
+      )}
       <Footer />
     </div>
   );
