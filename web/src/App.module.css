@@ -4,51 +4,76 @@
   flex-direction: column;
 }
 
-.header {
-  display: flex;
-  align-items: baseline;
-  gap: 0.75rem;
-  flex-wrap: wrap;
-  padding: 1rem 1.5rem;
-  border-bottom: 1px solid var(--line);
-  background: var(--surface);
-}
-
-.brand {
-  margin: 0;
-  font-size: 1.125rem;
-  font-weight: 600;
-  color: var(--accent);
-}
-
-.tagline {
-  margin: 0;
-  font-size: 0.875rem;
-  color: var(--muted);
-}
-
 .main {
   flex: 1;
-  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+  max-width: 96rem;
+  margin: 0 auto;
+  padding: 1.25rem 1.5rem;
 }
 
-.count {
-  font-size: 2rem;
-  font-weight: 600;
+/* Desktop: map 60% beside charts 40% (ARCHITECTURE.md §6). */
+.grid {
+  display: grid;
+  grid-template-columns: 3fr 2fr;
+  gap: 1rem;
+}
+
+.mapPanel,
+.chartPanel,
+.tablePanel {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  min-width: 0;
+}
+
+.mapPanel {
+  min-height: 440px;
+}
+
+.chartPanel {
+  min-height: 440px;
+}
+
+.tablePanel {
+  min-height: 200px;
+}
+
+.placeholder {
   margin: 0;
+  padding: 1rem;
+  color: var(--muted);
+  font-size: 0.875rem;
 }
 
 .meta {
   color: var(--muted);
-  margin: 0.25rem 0 0;
+  margin: 0;
 }
 
 .error {
   color: var(--red);
+  margin: 0;
+}
+
+/* Mobile: sections stack and the map is 50vh. */
+@media (max-width: 900px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+  .mapPanel {
+    min-height: 50vh;
+  }
+  .chartPanel {
+    min-height: 0;
+  }
 }
 
 @media (max-width: 600px) {
-  .header,
   .main {
     padding: 1rem;
   }

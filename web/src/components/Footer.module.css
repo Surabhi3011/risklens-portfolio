@@ -1,0 +1,27 @@
+.footer {
+  padding: 1.25rem 1.5rem 1.5rem;
+  border-top: 1px solid var(--line);
+  background: var(--surface);
+  font-size: 0.8125rem;
+  color: var(--muted);
+}
+
+.disclaimer,
+.attribution {
+  margin: 0 0 0.5rem;
+  max-width: 72rem;
+}
+
+.disclaimer strong {
+  color: var(--text);
+}
+
+.footer a {
+  color: var(--accent);
+}
+
+@media (max-width: 600px) {
+  .footer {
+    padding: 1rem;
+  }
+}
