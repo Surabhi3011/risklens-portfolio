@@ -1,0 +1,56 @@
+# Remote open-data endpoints used by scripts/00_fetch_raw.py (OGL v3.0, no keys).
+# Raw downloads land in data/raw/ and are recorded in data/raw/MANIFEST.md.
+
+flood_layers:
+  rofrs:
+    title: EA Risk of Flooding from Rivers and Sea (NaFRA2)
+    ogc_features: https://environment.data.gov.uk/geoservices/datasets/96ab4342-82c1-4095-87f1-0082e8d84ef1/ogc/features/v1
+    collection: rofrs_4band
+    band_field: risk_band
+  flood_zones:
+    title: EA Flood Map for Planning - Flood Zones 2 and 3 (Rivers and Sea)
+    ogc_features: https://environment.data.gov.uk/geoservices/datasets/04532375-a198-476e-985e-0579a0a11b47/ogc/features/v1
+    collection: Flood_Zones_2_3_Rivers_and_Sea
+    band_field: flood_zone
+  rofsw:
+    title: EA Risk of Flooding from Surface Water (NaFRA2)
+    ogc_features: https://environment.data.gov.uk/geoservices/datasets/b5aaa28d-6eb9-460e-8d6f-43caa71fbe0e/ogc/features/v1
+    collection: rofsw
+    band_field: risk_band
+
+page_size: 500
+
+# Raw band values -> internal values (ARCHITECTURE.md §3.3). Unknown values fail the run.
+band_maps:
+  rofrs: { "High": high, "Medium": medium, "Low": low, "Very low": very_low }
+  flood_zones: { "FZ3": "3", "FZ2": "2" }
+  rofsw: { "High": high, "Medium": medium, "Low": low, "Very low": very_low }
+
+# Location inputs for scripts/03_load_locations.py.
+os_open_uprn:
+  zip_path: data/raw/os_open_uprn/osopenuprn_202610_csv.zip
+  member: osopenuprn_202610.csv
+onspd:
+  zip_path: data/raw/onspd/ONSPD_AUG_2026.zip
+  member: Data/ONSPD_AUG_2026_UK.csv
+  # ARCHITECTURE.md calls the LA column `oslaua`; the August 2026 release names it lad26cd.
+  columns:
+    postcode: pcds
+    la_code: lad26cd
+    lat: lat
+    lon: long
+    lsoa21: lsoa21cd
+    terminated: doterm
+
+# UK House Price Index full file for scripts/05_hpi.py (OGL; this is the HPI, not Price Paid Data).
+hpi:
+  path: data/raw/hpi/UK-HPI-full-file-2026-08.csv
+  date_format: "%d/%m/%Y"
+  area_code: AreaCode
+  # internal property_type -> raw price column
+  price_columns:
+    all: AveragePrice
+    detached: DetachedPrice
+    semi_detached: SemiDetachedPrice
+    terraced: TerracedPrice
+    flat: FlatPrice

@@ -1,0 +1,42 @@
+# Demo local authorities (PLAN.md P0.2). Approved by Surabhi on 2026-11-10.
+# Codes and names come from ONS "Local Authority Districts (May 2026) Boundaries UK BGC".
+# They are checked against the ONSPD August 2026 column `lad26cd`.
+# bbox_wgs84 is [min_lon, min_lat, max_lon, max_lat], from the same boundary service.
+# It is used only to fetch flood features; the ETL then clips to the real boundary.
+
+boundary_source:
+  name: Local Authority Districts (May 2026) Boundaries UK BGC
+  feature_service: https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/Local_Authority_Districts_May_2026_Boundaries_UK_BGC/FeatureServer/0
+  code_field: LAD26CD
+  name_field: LAD26NM
+
+areas:
+  - la_code: E06000014
+    la_name: York
+    role: riverside northern city (Ouse and Foss)
+    live_postcodes_onspd: 5447
+    bbox_wgs84: [-1.2255, 53.8734, -0.9153, 54.0580]
+
+  - la_code: E07000145
+    la_name: Great Yarmouth
+    role: coastal town (tidal and coastal flood risk)
+    live_postcodes_onspd: 2760
+    bbox_wgs84: [1.5316, 52.5226, 1.7596, 52.7464]
+
+  - la_code: E09000033
+    la_name: Westminster
+    role: London borough with dense commercial stock (offices over 1,000 m2)
+    live_postcodes_onspd: 13063
+    bbox_wgs84: [-0.2177, 51.4844, -0.1100, 51.5404]
+
+  - la_code: E09000013
+    la_name: Hammersmith and Fulham
+    role: London borough, mostly residential, Thames-side with surface water risk
+    live_postcodes_onspd: 3677
+    bbox_wgs84: [-0.2565, 51.4646, -0.1772, 51.5329]
+
+# Alternative to York if a more extreme flood case is wanted:
+#  - la_code: E06000010
+#    la_name: Kingston upon Hull, City of
+#    live_postcodes_onspd: 5813
+#    bbox_wgs84: [-0.4235, 53.7171, -0.2391, 53.8147]
