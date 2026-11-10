@@ -39,7 +39,7 @@ Three phases, roughly one week each, part-time. Work top to bottom. Each task ha
 
 - [x] **P2.1 Scaffold web app.** Set up Vite + React + TS (strict), ESLint, vitest, MapLibre, ECharts and Zustand. Load `rules.json` and the GeoJSON.
   - Done when `npm run build` passes and the asset count shows on the page.
-- [ ] **P2.2 Scoring parity.** Write `lib/scoring.ts` and a vitest that runs `scoring_cases.json`.
+- [x] **P2.2 Scoring parity.** Write `lib/scoring.ts` and a vitest that runs `scoring_cases.json`.
   - Done when the same results come out as in Python.
 - [ ] **P2.3 Layout and KPI row.** Build the header, KPI row (assets, % below C, % in Flood Zone 3, indicative upgrade budget, value exposed) and footer with the full disclaimer and attributions (§7).
 - [ ] **P2.4 Risk map.** Use the OpenFreeMap muted style with points coloured by tier and labelled in the legend. Add WMS toggles for RoFRS, Flood Zones and RoFSW, and visible OSM attribution.
