@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { type Filters, NO_FILTERS, type SortDir, type SortKey } from '../lib/filters';
 import { loadAll } from '../lib/loadData';
 import type { PortfolioAsset, Rules } from '../types';
 
@@ -9,8 +10,13 @@ interface PortfolioState {
   rules: Rules | null;
   assets: PortfolioAsset[];
   selectedId: string | null;
+  filters: Filters;
+  sort: { key: SortKey; dir: SortDir };
   init: () => Promise<void>;
   select: (assetId: string | null) => void;
+  setFilter: <K extends keyof Filters>(key: K, value: Filters[K]) => void;
+  resetFilters: () => void;
+  sortBy: (key: SortKey) => void;
 }
 
 export const usePortfolioStore = create<PortfolioState>()((set, get) => ({
@@ -18,6 +24,8 @@ export const usePortfolioStore = create<PortfolioState>()((set, get) => ({
   rules: null,
   assets: [],
   selectedId: null,
+  filters: NO_FILTERS,
+  sort: { key: 'tier', dir: 'asc' },
   init: async () => {
     if (get().load.status !== 'idle') return;
     set({ load: { status: 'loading' } });
@@ -30,5 +38,16 @@ export const usePortfolioStore = create<PortfolioState>()((set, get) => ({
   },
   select: (assetId) => {
     set({ selectedId: assetId });
+  },
+  setFilter: (key, value) => {
+    set((s) => ({ filters: { ...s.filters, [key]: value } }));
+  },
+  resetFilters: () => {
+    set({ filters: NO_FILTERS });
+  },
+  sortBy: (key) => {
+    set((s) => ({
+      sort: { key, dir: s.sort.key === key && s.sort.dir === 'asc' ? 'desc' : 'asc' },
+    }));
   },
 }));
