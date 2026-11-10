@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { type SortDir, type SortKey, sortAssets } from '../lib/filters';
 import { formatGbpCompact } from '../lib/format';
 import { deadlineText, FLOOD_SCORE_LABEL, STATUS_LABEL, ZONE_LABEL } from '../lib/labels';
@@ -37,11 +37,19 @@ const COLUMNS: readonly Column[] = [
   { key: 'value', label: 'Value', wide: true, numeric: true },
 ];
 
+/** Rows rendered at first; the rest on request. Keeps the first render light on phones. */
+const INITIAL_ROWS = 60;
+
 const ariaSort = (col: SortKey, sort: AssetTableProps['sort']): 'ascending' | 'descending' | 'none' =>
   sort.key !== col ? 'none' : sort.dir === 'asc' ? 'ascending' : 'descending';
 
 export function AssetTable({ assets, rules, sort, selectedId, onSort, onSelect }: AssetTableProps) {
-  const rows = sortAssets(assets, sort.key, sort.dir);
+  const sorted = sortAssets(assets, sort.key, sort.dir);
+  const [showAll, setShowAll] = useState(false);
+  // Expand automatically when the selected asset (e.g. clicked on the map) is beyond the first rows.
+  const selectedIndex = selectedId ? sorted.findIndex((a) => a.asset_id === selectedId) : -1;
+  const expanded = showAll || selectedIndex >= INITIAL_ROWS;
+  const rows = expanded ? sorted : sorted.slice(0, INITIAL_ROWS);
   const rowRefs = useRef(new Map<string, HTMLTableRowElement>());
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -165,6 +173,20 @@ export function AssetTable({ assets, rules, sort, selectedId, onSort, onSelect }
           )}
         </tbody>
       </table>
+      {!expanded && sorted.length > INITIAL_ROWS && (
+        <div className={styles.more}>
+          <button
+            type="button"
+            className={styles.moreBtn}
+            onClick={() => {
+              setShowAll(true);
+            }}
+          >
+            Show all {sorted.length} assets
+          </button>
+          <span className={styles.muted}>Showing the first {INITIAL_ROWS}, in the current sort order</span>
+        </div>
+      )}
     </div>
   );
 }

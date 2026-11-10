@@ -19,7 +19,7 @@ export function Header({ asOf, uploaded = false, onUpload, onExportCsv, onExport
       </div>
       <div className={styles.meta}>
         <span className={styles.badge}>{uploaded ? 'Uploaded portfolio' : 'Demo portfolio'}</span>
-        {asOf && <span className={styles.asOf}>Rules as of {asOf}</span>}
+        <span className={styles.asOf}>Rules as of {asOf ?? '…'}</span>
         {(onExportCsv ?? onExportPdf) && (
           <span className={styles.group} role="group" aria-label="Export the current selection">
             {onExportCsv && (

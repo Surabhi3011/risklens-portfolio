@@ -2,6 +2,7 @@ import { lazy, Suspense, useEffect, useMemo, useState } from 'react';
 import styles from './App.module.css';
 import { AssetDrawer } from './components/AssetDrawer';
 import { AssetTable } from './components/AssetTable';
+import { DeferredMount } from './components/DeferredMount';
 import { Filters } from './components/Filters';
 import { Footer } from './components/Footer';
 import { Header } from './components/Header';
@@ -130,14 +131,18 @@ export default function App() {
             <SummaryCard assets={visible} rules={rules} />
             <div className={styles.grid}>
               <section className={styles.mapPanel} aria-label="Risk map">
-                <Suspense fallback={<p className={styles.placeholder}>Loading map…</p>}>
-                  <RiskMap assets={visible} selectedId={selectedId} onSelect={select} />
-                </Suspense>
+                <DeferredMount fallback={<p className={styles.placeholder}>Loading map…</p>}>
+                  <Suspense fallback={<p className={styles.placeholder}>Loading map…</p>}>
+                    <RiskMap assets={visible} selectedId={selectedId} onSelect={select} />
+                  </Suspense>
+                </DeferredMount>
               </section>
               <section className={styles.chartPanel} aria-label="Charts">
-                <Suspense fallback={<p className={styles.placeholder}>Loading charts…</p>}>
-                  <ChartsPanel assets={visible} rules={rules} />
-                </Suspense>
+                <DeferredMount fallback={<p className={styles.placeholder}>Loading charts…</p>}>
+                  <Suspense fallback={<p className={styles.placeholder}>Loading charts…</p>}>
+                    <ChartsPanel assets={visible} rules={rules} />
+                  </Suspense>
+                </DeferredMount>
               </section>
             </div>
             <section className={styles.tablePanel} aria-label="Assets" id="asset-table" tabIndex={-1}>
