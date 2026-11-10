@@ -6,8 +6,8 @@ import styles from './UploadDialog.module.css';
 interface UploadDialogProps {
   open: boolean;
   onClose: () => void;
-  /** Called with the valid rows. When absent, the continue button is disabled. */
-  onSubmit?: (rows: PortfolioRow[]) => void;
+  /** Enrich the valid rows. Rejects with an error to show in the dialog. */
+  onSubmit: (rows: PortfolioRow[], fileName: string) => Promise<void>;
 }
 
 const SAMPLE_URL = `${import.meta.env.BASE_URL}data/portfolio_sample.csv`;
@@ -24,6 +24,8 @@ export function UploadDialog({ open, onClose, onSubmit }: UploadDialogProps) {
   const titleId = useId();
   const [state, setState] = useState<State>({ kind: 'empty' });
   const [dragging, setDragging] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   useEffect(() => {
     const d = ref.current;
@@ -33,6 +35,7 @@ export function UploadDialog({ open, onClose, onSubmit }: UploadDialogProps) {
   }, [open]);
 
   const handleFile = (file: File): void => {
+    setSubmitError(null);
     if (file.size > MAX_FILE_BYTES) {
       setState({ kind: 'failed', fileName: file.name, message: 'The file is larger than 5 MB.' });
       return;
@@ -52,7 +55,21 @@ export function UploadDialog({ open, onClose, onSubmit }: UploadDialogProps) {
   };
 
   const result = state.kind === 'done' ? state.result : null;
-  const canSubmit = result !== null && result.rows.length > 0 && result.errors.length === 0 && onSubmit !== undefined;
+  const canSubmit = result !== null && result.rows.length > 0 && result.errors.length === 0 && !busy;
+
+  const submit = async (): Promise<void> => {
+    if (!canSubmit || state.kind !== 'done') return;
+    setBusy(true);
+    setSubmitError(null);
+    try {
+      await onSubmit(result.rows, state.fileName);
+      setState({ kind: 'empty' });
+    } catch (err) {
+      setSubmitError(err instanceof Error ? err.message : String(err));
+    } finally {
+      setBusy(false);
+    }
+  };
 
   return (
     <dialog ref={ref} className={styles.dialog} aria-labelledby={titleId} onClose={onClose}>
@@ -213,6 +230,12 @@ export function UploadDialog({ open, onClose, onSubmit }: UploadDialogProps) {
       </div>
 
       <footer className={styles.foot}>
+        {submitError && (
+          <p className={styles.bad} role="alert">
+            Enrichment failed: {submitError}
+          </p>
+        )}
+        {busy && <p className={styles.muted}>Matching against open data in your browser…</p>}
         <button type="button" className={styles.secondary} onClick={onClose}>
           Cancel
         </button>
@@ -221,10 +244,14 @@ export function UploadDialog({ open, onClose, onSubmit }: UploadDialogProps) {
           className={styles.primary}
           disabled={!canSubmit}
           onClick={() => {
-            if (canSubmit) onSubmit(result.rows);
+            void submit();
           }}
         >
-          Enrich {result && result.errors.length === 0 ? result.rows.length : ''} assets
+          {busy
+            ? 'Enriching…'
+            : result && result.errors.length === 0
+              ? `Enrich ${String(result.rows.length)} assets`
+              : 'Enrich assets'}
         </button>
       </footer>
     </dialog>

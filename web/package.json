@@ -12,6 +12,7 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@duckdb/duckdb-wasm": "^1.33.1-dev57.0",
     "echarts": "^6.1.0",
     "echarts-for-react": "^3.0.6",
     "maplibre-gl": "^6.17.0",

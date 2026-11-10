@@ -6,8 +6,10 @@ import { Filters } from './components/Filters';
 import { Footer } from './components/Footer';
 import { Header } from './components/Header';
 import { KpiRow } from './components/KpiRow';
+import { UploadBanner } from './components/UploadBanner';
 import { UploadDialog } from './components/UploadDialog';
 import { filterAssets } from './lib/filters';
+import type { PortfolioRow } from './lib/validateUpload';
 import { usePortfolioStore } from './state/portfolioStore';
 
 // MapLibre and ECharts are the heaviest dependencies: load them after the KPIs and table are on screen.
@@ -26,12 +28,36 @@ export default function App() {
   const resetFilters = usePortfolioStore((s) => s.resetFilters);
   const sort = usePortfolioStore((s) => s.sort);
   const sortBy = usePortfolioStore((s) => s.sortBy);
+  const source = usePortfolioStore((s) => s.source);
+  const demoAssets = usePortfolioStore((s) => s.demoAssets);
+  const showUpload = usePortfolioStore((s) => s.showUpload);
+  const backToDemo = usePortfolioStore((s) => s.backToDemo);
 
   const [uploadOpen, setUploadOpen] = useState(false);
 
   useEffect(() => {
     void init();
   }, [init]);
+
+  // Start downloading DuckDB-Wasm as soon as the upload dialog opens, so enrichment is ready sooner.
+  useEffect(() => {
+    if (!uploadOpen) return;
+    import('./lib/duck')
+      .then((m) => m.warmUp())
+      .catch(() => {
+        /* surfaced on submit */
+      });
+  }, [uploadOpen]);
+
+  const laNames = useMemo(() => new Map(demoAssets.map((a) => [a.la_code, a.la_name])), [demoAssets]);
+
+  const enrich = async (rows: PortfolioRow[], fileName: string): Promise<void> => {
+    if (!rules) throw new Error('Rules are not loaded yet.');
+    const { enrichUpload } = await import('./lib/duck');
+    const { assets: enriched, summary, ms } = await enrichUpload(rows, rules, laNames);
+    showUpload(enriched, { fileName, summary, ms });
+    setUploadOpen(false);
+  };
 
   // One filtered list drives the KPIs, map, charts and table together.
   const visible = useMemo(() => filterAssets(assets, filters), [assets, filters]);
@@ -45,6 +71,7 @@ export default function App() {
       </a>
       <Header
         asOf={rules?.as_of ?? null}
+        uploaded={source.kind === 'upload'}
         onUpload={() => {
           setUploadOpen(true);
         }}
@@ -56,6 +83,9 @@ export default function App() {
         </div>
         {load.status === 'ready' && rules && (
           <>
+            {source.kind === 'upload' && (
+              <UploadBanner fileName={source.fileName} summary={source.summary} ms={source.ms} onBack={backToDemo} />
+            )}
             <Filters
               assets={assets}
               filters={filters}
@@ -103,6 +133,7 @@ export default function App() {
         onClose={() => {
           setUploadOpen(false);
         }}
+        onSubmit={enrich}
       />
       <Footer />
     </div>
