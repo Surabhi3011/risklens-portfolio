@@ -1,0 +1,14 @@
+# Synthetic demo portfolio (PLAN.md P1.8). Built from real EPC records; addresses are never used.
+seed: 20261110
+below_c_share: 0.40        # share of each quota drawn from bands D-G
+min_flood_share: 0.10      # fail the run if fewer assets than this fall in any flood band
+large_floor_area_m2: 1000  # "large" commercial threshold (matches the 2031 rule in rules.json)
+
+# Domestic: private rented only. Social housing is outside the domestic MEES regime, so it would mislead the demo.
+domestic_tenures: ["rented (private)"]
+
+quotas:
+  residential: { E06000014: 40, E07000145: 35, E09000013: 35, E09000033: 40 }  # 150
+  commercial:  { E06000014: 7,  E07000145: 5,  E09000013: 6,  E09000033: 12 }  # 30
+# How many of each commercial quota must be over large_floor_area_m2 (6 of 30)
+large_commercial: { E06000014: 1, E07000145: 1, E09000013: 1, E09000033: 3 }
