@@ -55,7 +55,7 @@ Three phases, roughly one week each, part-time. Work top to bottom. Each task ha
 
 ## Phase 3 — Upload, export, ship (week 3)
 
-- [ ] **P3.1 Upload dialog.** Offer a downloadable sample CSV and validate input against §3.2, showing clear row-level errors.
+- [x] **P3.1 Upload dialog.** Offer a downloadable sample CSV and validate input against §3.2, showing clear row-level errors.
 - [ ] **P3.2 DuckDB-Wasm enrichment** (`lib/duck.ts`). Lazy-load it, join by UPRN, fall back to postcode, score in TS and replace the store.
   - Done when the summary shows the counts matched by UPRN, matched by postcode, and not covered, and a 500-row upload takes under 5 s.
 - [ ] **P3.3 Exports.** The CSV export contains the enriched assets for the current filter. The one-page PDF (jsPDF) has the KPIs, band chart image, top 10 act-now assets, disclaimer and attribution.

@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useMemo } from 'react';
+import { lazy, Suspense, useEffect, useMemo, useState } from 'react';
 import styles from './App.module.css';
 import { AssetDrawer } from './components/AssetDrawer';
 import { AssetTable } from './components/AssetTable';
@@ -6,6 +6,7 @@ import { Filters } from './components/Filters';
 import { Footer } from './components/Footer';
 import { Header } from './components/Header';
 import { KpiRow } from './components/KpiRow';
+import { UploadDialog } from './components/UploadDialog';
 import { filterAssets } from './lib/filters';
 import { usePortfolioStore } from './state/portfolioStore';
 
@@ -26,6 +27,8 @@ export default function App() {
   const sort = usePortfolioStore((s) => s.sort);
   const sortBy = usePortfolioStore((s) => s.sortBy);
 
+  const [uploadOpen, setUploadOpen] = useState(false);
+
   useEffect(() => {
     void init();
   }, [init]);
@@ -40,7 +43,12 @@ export default function App() {
       <a className={styles.skip} href="#asset-table">
         Skip to asset table
       </a>
-      <Header asOf={rules?.as_of ?? null} />
+      <Header
+        asOf={rules?.as_of ?? null}
+        onUpload={() => {
+          setUploadOpen(true);
+        }}
+      />
       <main className={styles.main}>
         <div aria-live="polite">
           {load.status === 'error' && <p className={styles.error}>Could not load portfolio data: {load.message}</p>}
@@ -90,6 +98,12 @@ export default function App() {
           }}
         />
       )}
+      <UploadDialog
+        open={uploadOpen}
+        onClose={() => {
+          setUploadOpen(false);
+        }}
+      />
       <Footer />
     </div>
   );
