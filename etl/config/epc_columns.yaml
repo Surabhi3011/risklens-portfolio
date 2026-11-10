@@ -1,0 +1,65 @@
+# Maps raw EPC headers to internal names (ARCHITECTURE.md §3.1).
+# Written for the November 2026 release from get-energy-performance-data.communities.gov.uk.
+#
+# Differences from ARCHITECTURE.md §3.1 (as of 2026-11-10):
+#   - Headers are lower-case (current_energy_rating, not CURRENT_ENERGY_RATING).
+#   - The certificate key is `certificate_number`, not LMK_KEY. It is still stored internally as `lmk_key`.
+#   - Domestic recommendations use `improvement_summary_text` for the summary.
+#   - Non-domestic recommendations have no indicative_cost. They carry payback_type plus
+#     `recommendation` text, so cost_low, cost_high and cost_mid are null.
+#   - Non-domestic bands include "A+", which is mapped to "A" via band_aliases.
+#
+# Only the mapped columns are read. Address columns are never loaded. As a second guard,
+# any output column matching forbidden_column_patterns fails the run.
+
+forbidden_column_patterns: ["address", "posttown"]
+
+band_aliases:
+  "A+": "A"
+
+domestic:
+  certificates:
+    path: data/raw/epc/domestic/certificates.csv
+    columns:
+      lmk_key: certificate_number
+      uprn: uprn
+      postcode: postcode
+      la_code: local_authority
+      band_current: current_energy_rating
+      score_current: current_energy_efficiency
+      band_potential: potential_energy_rating
+      floor_area_m2: total_floor_area
+      property_type: property_type
+      tenure: tenure
+      lodgement_date: lodgement_date
+  recommendations:
+    path: data/raw/epc/domestic/recommendations.csv
+    columns:
+      lmk_key: certificate_number
+      improvement_item: improvement_item
+      summary: improvement_summary_text
+      indicative_cost: indicative_cost
+
+non_domestic:
+  # National zip of yearly files: certificates-YYYY.csv and recommendations-YYYY.csv.
+  zip_path: data/raw/epc/non_domestic/non-domestic-csv.zip
+  certificates:
+    member_prefix: certificates-
+    columns:
+      lmk_key: certificate_number
+      uprn: uprn
+      postcode: postcode
+      la_code: local_authority
+      band_current: asset_rating_band
+      score_current: asset_rating
+      floor_area_m2: floor_area
+      property_type: property_type
+      lodgement_date: lodgement_date
+      # band_potential and tenure are not published for non-domestic certificates
+  recommendations:
+    member_prefix: recommendations-
+    columns:
+      lmk_key: certificate_number
+      improvement_item: recommendation_item
+      summary: recommendation
+      payback_type: payback_type

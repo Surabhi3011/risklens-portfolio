@@ -1,0 +1,13 @@
+{
+  "as_of": "2026-11-09",
+  "rules": [
+    { "id": "dom_mees_current", "use": "residential", "tenure": "rented", "min_band": "E", "deadline": null, "status": "in_force" },
+    { "id": "dom_mees_2030", "use": "residential", "tenure": "rented", "min_band": "C", "deadline": "2030-10-01", "status": "confirmed_policy", "note": "EPC C or equivalent; new EPC metrics may change the mapping" },
+    { "id": "nondom_mees_current", "use": "commercial", "tenure": "rented", "min_band": "E", "deadline": null, "status": "in_force" },
+    { "id": "nondom_mees_2031", "use": "commercial", "tenure": "rented", "min_band": "B", "min_floor_area_m2": 1000, "deadline": "2031-01-01", "status": "announced", "note": "Where cost-effective; subject to secondary legislation; exact date TBC" }
+  ],
+  "weights": { "compliance": 0.5, "flood": 0.35, "data_quality": 0.15 },
+  "tiers": { "watch": 30, "act": 60 },
+  "data_quality": { "epc_fresh_years": 5, "epc_valid_years": 10 },
+  "fallback_upgrade_cost_gbp": { "residential": "TODO", "commercial": "TODO" }
+}
