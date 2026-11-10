@@ -1,0 +1,618 @@
+{
+  "description": "Hand-checked scoring cases (ARCHITECTURE.md §4) shared by pytest and vitest. Rules come from web/public/config/rules.json; as_of 2026-11-09.",
+  "rules_as_of": "2026-11-09",
+  "cases": [
+    {
+      "name": "res_rented_D_fails_2030_only",
+      "why": "D meets E but not C; total 0.5*50 = 25",
+      "input": {
+        "use": "residential",
+        "tenure": "rented",
+        "match_level": "uprn",
+        "band_current": "D",
+        "floor_area_m2": 70.0,
+        "lodgement_date": "2024-01-01",
+        "flood": {
+          "rofrs": "none",
+          "zone": "none",
+          "rofsw": "none"
+        },
+        "rec_costs_mid": [
+          1000,
+          500
+        ]
+      },
+      "expected": {
+        "compliance": {
+          "failing_rule_id": "dom_mees_2030",
+          "deadline": "2030-10-01",
+          "status": "fails_future"
+        },
+        "scores": {
+          "compliance": 50,
+          "flood": 0,
+          "data_quality": 0,
+          "total": 25
+        },
+        "tier": "low",
+        "upgrade_cost_mid_gbp": 1500.0
+      }
+    },
+    {
+      "name": "res_rented_F_fails_current_zone3",
+      "why": "F below E; Zone 3 -> flood 100; 50+35 = 85; null rec cost ignored",
+      "input": {
+        "use": "residential",
+        "tenure": "rented",
+        "match_level": "uprn",
+        "band_current": "F",
+        "floor_area_m2": 70.0,
+        "lodgement_date": "2024-03-01",
+        "flood": {
+          "rofrs": "none",
+          "zone": "3",
+          "rofsw": "none"
+        },
+        "rec_costs_mid": [
+          2000,
+          null
+        ]
+      },
+      "expected": {
+        "compliance": {
+          "failing_rule_id": "dom_mees_current",
+          "deadline": null,
+          "status": "fails_current"
+        },
+        "scores": {
+          "compliance": 100,
+          "flood": 100,
+          "data_quality": 0,
+          "total": 85
+        },
+        "tier": "act",
+        "upgrade_cost_mid_gbp": 2000.0
+      }
+    },
+    {
+      "name": "owner_occupied_G_is_exempt",
+      "why": "MEES applies only to rented",
+      "input": {
+        "use": "residential",
+        "tenure": "owner_occupied",
+        "match_level": "uprn",
+        "band_current": "G",
+        "floor_area_m2": 70.0,
+        "lodgement_date": "2023-05-05",
+        "flood": {
+          "rofrs": "none",
+          "zone": "none",
+          "rofsw": "none"
+        },
+        "rec_costs_mid": []
+      },
+      "expected": {
+        "compliance": {
+          "failing_rule_id": null,
+          "deadline": null,
+          "status": "compliant"
+        },
+        "scores": {
+          "compliance": 0,
+          "flood": 0,
+          "data_quality": 0,
+          "total": 0
+        },
+        "tier": "low",
+        "upgrade_cost_mid_gbp": 0.0
+      }
+    },
+    {
+      "name": "rented_no_epc_no_match",
+      "why": "no EPC while rented -> 100; no match -> DQ 100; 50+15 = 65; fallback TODO -> null",
+      "input": {
+        "use": "residential",
+        "tenure": "rented",
+        "match_level": "none",
+        "band_current": null,
+        "floor_area_m2": null,
+        "lodgement_date": null,
+        "flood": {
+          "rofrs": "none",
+          "zone": "none",
+          "rofsw": "none"
+        },
+        "rec_costs_mid": []
+      },
+      "expected": {
+        "compliance": {
+          "failing_rule_id": null,
+          "deadline": null,
+          "status": "no_epc"
+        },
+        "scores": {
+          "compliance": 100,
+          "flood": 0,
+          "data_quality": 100,
+          "total": 65
+        },
+        "tier": "act",
+        "upgrade_cost_mid_gbp": null
+      }
+    },
+    {
+      "name": "rented_expired_epc",
+      "why": "expired counts as no EPC; RoFRS medium -> 50; 50+17.5+15 = 82.5 -> 83 (half-up); not failing a rule -> fallback TODO -> null",
+      "input": {
+        "use": "residential",
+        "tenure": "rented",
+        "match_level": "uprn",
+        "band_current": "C",
+        "floor_area_m2": 70.0,
+        "lodgement_date": "2015-06-01",
+        "flood": {
+          "rofrs": "medium",
+          "zone": "none",
+          "rofsw": "none"
+        },
+        "rec_costs_mid": [
+          300
+        ]
+      },
+      "expected": {
+        "compliance": {
+          "failing_rule_id": null,
+          "deadline": null,
+          "status": "no_epc"
+        },
+        "scores": {
+          "compliance": 100,
+          "flood": 50,
+          "data_quality": 100,
+          "total": 83
+        },
+        "tier": "act",
+        "upgrade_cost_mid_gbp": null
+      }
+    },
+    {
+      "name": "commercial_C_1500m2_fails_2031",
+      "why": "2031 B rule applies at >= 1000 m2; no costed recs and fallback TODO -> null",
+      "input": {
+        "use": "commercial",
+        "tenure": "rented",
+        "match_level": "uprn",
+        "band_current": "C",
+        "floor_area_m2": 1500.0,
+        "lodgement_date": "2025-01-10",
+        "flood": {
+          "rofrs": "none",
+          "zone": "none",
+          "rofsw": "none"
+        },
+        "rec_costs_mid": [
+          null,
+          null
+        ]
+      },
+      "expected": {
+        "compliance": {
+          "failing_rule_id": "nondom_mees_2031",
+          "deadline": "2031-01-01",
+          "status": "fails_future"
+        },
+        "scores": {
+          "compliance": 50,
+          "flood": 0,
+          "data_quality": 0,
+          "total": 25
+        },
+        "tier": "low",
+        "upgrade_cost_mid_gbp": null
+      }
+    },
+    {
+      "name": "commercial_C_800m2_2031_not_applicable",
+      "why": "below 1000 m2 the 2031 rule does not apply",
+      "input": {
+        "use": "commercial",
+        "tenure": "rented",
+        "match_level": "uprn",
+        "band_current": "C",
+        "floor_area_m2": 800.0,
+        "lodgement_date": "2025-01-10",
+        "flood": {
+          "rofrs": "none",
+          "zone": "none",
+          "rofsw": "none"
+        },
+        "rec_costs_mid": []
+      },
+      "expected": {
+        "compliance": {
+          "failing_rule_id": null,
+          "deadline": null,
+          "status": "compliant"
+        },
+        "scores": {
+          "compliance": 0,
+          "flood": 0,
+          "data_quality": 0,
+          "total": 0
+        },
+        "tier": "low",
+        "upgrade_cost_mid_gbp": 0.0
+      }
+    },
+    {
+      "name": "commercial_F_postcode_zone2",
+      "why": "F below E; Zone 2 -> 50; postcode match -> DQ 50; 50+17.5+7.5 = 75",
+      "input": {
+        "use": "commercial",
+        "tenure": "rented",
+        "match_level": "postcode",
+        "band_current": "F",
+        "floor_area_m2": 2000.0,
+        "lodgement_date": "2023-01-01",
+        "flood": {
+          "rofrs": "none",
+          "zone": "2",
+          "rofsw": "none"
+        },
+        "rec_costs_mid": []
+      },
+      "expected": {
+        "compliance": {
+          "failing_rule_id": "nondom_mees_current",
+          "deadline": null,
+          "status": "fails_current"
+        },
+        "scores": {
+          "compliance": 100,
+          "flood": 50,
+          "data_quality": 50,
+          "total": 75
+        },
+        "tier": "act",
+        "upgrade_cost_mid_gbp": null
+      }
+    },
+    {
+      "name": "res_rented_C_postcode_7y_rofsw_high",
+      "why": "RoFSW high -> 100; 35+7.5 = 42.5 -> 43 (half-up)",
+      "input": {
+        "use": "residential",
+        "tenure": "rented",
+        "match_level": "postcode",
+        "band_current": "C",
+        "floor_area_m2": 70.0,
+        "lodgement_date": "2019-06-01",
+        "flood": {
+          "rofrs": "none",
+          "zone": "none",
+          "rofsw": "high"
+        },
+        "rec_costs_mid": []
+      },
+      "expected": {
+        "compliance": {
+          "failing_rule_id": null,
+          "deadline": null,
+          "status": "compliant"
+        },
+        "scores": {
+          "compliance": 0,
+          "flood": 100,
+          "data_quality": 50,
+          "total": 43
+        },
+        "tier": "watch",
+        "upgrade_cost_mid_gbp": 0.0
+      }
+    },
+    {
+      "name": "res_rented_E_6y_rofrs_low",
+      "why": "E meets E, fails C; RoFRS low -> 50; EPC 5-10y -> DQ 50; 25+17.5+7.5 = 50; no recs -> fallback TODO -> null",
+      "input": {
+        "use": "residential",
+        "tenure": "rented",
+        "match_level": "uprn",
+        "band_current": "E",
+        "floor_area_m2": 70.0,
+        "lodgement_date": "2020-01-01",
+        "flood": {
+          "rofrs": "low",
+          "zone": "none",
+          "rofsw": "none"
+        },
+        "rec_costs_mid": []
+      },
+      "expected": {
+        "compliance": {
+          "failing_rule_id": "dom_mees_2030",
+          "deadline": "2030-10-01",
+          "status": "fails_future"
+        },
+        "scores": {
+          "compliance": 50,
+          "flood": 50,
+          "data_quality": 50,
+          "total": 50
+        },
+        "tier": "watch",
+        "upgrade_cost_mid_gbp": null
+      }
+    },
+    {
+      "name": "commercial_B_1200m2_rofsw_medium",
+      "why": "B meets B; RoFSW medium -> 50; 17.5 -> 18",
+      "input": {
+        "use": "commercial",
+        "tenure": "rented",
+        "match_level": "uprn",
+        "band_current": "B",
+        "floor_area_m2": 1200.0,
+        "lodgement_date": "2024-07-01",
+        "flood": {
+          "rofrs": "none",
+          "zone": "none",
+          "rofsw": "medium"
+        },
+        "rec_costs_mid": []
+      },
+      "expected": {
+        "compliance": {
+          "failing_rule_id": null,
+          "deadline": null,
+          "status": "compliant"
+        },
+        "scores": {
+          "compliance": 0,
+          "flood": 50,
+          "data_quality": 0,
+          "total": 18
+        },
+        "tier": "low",
+        "upgrade_cost_mid_gbp": 0.0
+      }
+    },
+    {
+      "name": "res_rented_C_minor_flood_only",
+      "why": "RoFRS very_low and RoFSW low score 0",
+      "input": {
+        "use": "residential",
+        "tenure": "rented",
+        "match_level": "uprn",
+        "band_current": "C",
+        "floor_area_m2": 70.0,
+        "lodgement_date": "2024-06-01",
+        "flood": {
+          "rofrs": "very_low",
+          "zone": "none",
+          "rofsw": "low"
+        },
+        "rec_costs_mid": []
+      },
+      "expected": {
+        "compliance": {
+          "failing_rule_id": null,
+          "deadline": null,
+          "status": "compliant"
+        },
+        "scores": {
+          "compliance": 0,
+          "flood": 0,
+          "data_quality": 0,
+          "total": 0
+        },
+        "tier": "low",
+        "upgrade_cost_mid_gbp": 0.0
+      }
+    },
+    {
+      "name": "epc_exactly_10_years_not_expired",
+      "why": "lodged exactly 10y before as_of is still valid; DQ 50; 25+7.5 = 32.5 -> 33",
+      "input": {
+        "use": "residential",
+        "tenure": "rented",
+        "match_level": "uprn",
+        "band_current": "D",
+        "floor_area_m2": 70.0,
+        "lodgement_date": "2016-11-09",
+        "flood": {
+          "rofrs": "none",
+          "zone": "none",
+          "rofsw": "none"
+        },
+        "rec_costs_mid": [
+          225
+        ]
+      },
+      "expected": {
+        "compliance": {
+          "failing_rule_id": "dom_mees_2030",
+          "deadline": "2030-10-01",
+          "status": "fails_future"
+        },
+        "scores": {
+          "compliance": 50,
+          "flood": 0,
+          "data_quality": 50,
+          "total": 33
+        },
+        "tier": "watch",
+        "upgrade_cost_mid_gbp": 225.0
+      }
+    },
+    {
+      "name": "epc_10_years_and_1_day_expired",
+      "why": "one day past 10y is expired",
+      "input": {
+        "use": "residential",
+        "tenure": "rented",
+        "match_level": "uprn",
+        "band_current": "D",
+        "floor_area_m2": 70.0,
+        "lodgement_date": "2016-11-08",
+        "flood": {
+          "rofrs": "none",
+          "zone": "none",
+          "rofsw": "none"
+        },
+        "rec_costs_mid": [
+          225
+        ]
+      },
+      "expected": {
+        "compliance": {
+          "failing_rule_id": null,
+          "deadline": null,
+          "status": "no_epc"
+        },
+        "scores": {
+          "compliance": 100,
+          "flood": 0,
+          "data_quality": 100,
+          "total": 65
+        },
+        "tier": "act",
+        "upgrade_cost_mid_gbp": null
+      }
+    },
+    {
+      "name": "epc_exactly_5_years_not_fresh",
+      "why": "under 5 years means strictly after as_of - 5y; exactly 5y -> DQ 50; 17.5+7.5 = 25",
+      "input": {
+        "use": "residential",
+        "tenure": "rented",
+        "match_level": "uprn",
+        "band_current": "C",
+        "floor_area_m2": 70.0,
+        "lodgement_date": "2021-11-09",
+        "flood": {
+          "rofrs": "none",
+          "zone": "2",
+          "rofsw": "none"
+        },
+        "rec_costs_mid": []
+      },
+      "expected": {
+        "compliance": {
+          "failing_rule_id": null,
+          "deadline": null,
+          "status": "compliant"
+        },
+        "scores": {
+          "compliance": 0,
+          "flood": 50,
+          "data_quality": 50,
+          "total": 25
+        },
+        "tier": "low",
+        "upgrade_cost_mid_gbp": 0.0
+      }
+    },
+    {
+      "name": "half_up_rounding_42_5",
+      "why": "25+17.5 = 42.5 -> 43 (Python round() would give 42)",
+      "input": {
+        "use": "residential",
+        "tenure": "rented",
+        "match_level": "uprn",
+        "band_current": "D",
+        "floor_area_m2": 70.0,
+        "lodgement_date": "2025-02-02",
+        "flood": {
+          "rofrs": "none",
+          "zone": "2",
+          "rofsw": "none"
+        },
+        "rec_costs_mid": [
+          400,
+          600
+        ]
+      },
+      "expected": {
+        "compliance": {
+          "failing_rule_id": "dom_mees_2030",
+          "deadline": "2030-10-01",
+          "status": "fails_future"
+        },
+        "scores": {
+          "compliance": 50,
+          "flood": 50,
+          "data_quality": 0,
+          "total": 43
+        },
+        "tier": "watch",
+        "upgrade_cost_mid_gbp": 1000.0
+      }
+    },
+    {
+      "name": "commercial_unknown_floor_area",
+      "why": "unknown floor area: the 1000 m2 rule cannot be shown to apply",
+      "input": {
+        "use": "commercial",
+        "tenure": "rented",
+        "match_level": "uprn",
+        "band_current": "C",
+        "floor_area_m2": null,
+        "lodgement_date": "2025-01-10",
+        "flood": {
+          "rofrs": "none",
+          "zone": "none",
+          "rofsw": "none"
+        },
+        "rec_costs_mid": []
+      },
+      "expected": {
+        "compliance": {
+          "failing_rule_id": null,
+          "deadline": null,
+          "status": "compliant"
+        },
+        "scores": {
+          "compliance": 0,
+          "flood": 0,
+          "data_quality": 0,
+          "total": 0
+        },
+        "tier": "low",
+        "upgrade_cost_mid_gbp": 0.0
+      }
+    },
+    {
+      "name": "owner_occupied_no_epc",
+      "why": "owner-occupied is exempt even without EPC; DQ 100 -> 15",
+      "input": {
+        "use": "residential",
+        "tenure": "owner_occupied",
+        "match_level": "none",
+        "band_current": null,
+        "floor_area_m2": null,
+        "lodgement_date": null,
+        "flood": {
+          "rofrs": "none",
+          "zone": "none",
+          "rofsw": "none"
+        },
+        "rec_costs_mid": []
+      },
+      "expected": {
+        "compliance": {
+          "failing_rule_id": null,
+          "deadline": null,
+          "status": "compliant"
+        },
+        "scores": {
+          "compliance": 0,
+          "flood": 0,
+          "data_quality": 100,
+          "total": 15
+        },
+        "tier": "low",
+        "upgrade_cost_mid_gbp": 0.0
+      }
+    }
+  ]
+}
