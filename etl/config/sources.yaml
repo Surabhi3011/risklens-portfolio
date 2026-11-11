@@ -39,6 +39,9 @@ onspd:
     la_code: lad26cd
     lat: lat
     lon: long
+    # Native British National Grid coordinates (1 m), used for spatial joins to avoid a datum shift.
+    x: east1m
+    y: north1m
     lsoa21: lsoa21cd
     terminated: doterm
 

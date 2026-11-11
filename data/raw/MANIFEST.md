@@ -30,25 +30,28 @@ Record every raw download here: source page, direct URL, download date, release,
 - Licence: OGL v3.0 (HM Land Registry, ONS). This is the HPI index file, not Price Paid Data.
 - Latest month available on 2026-11-10. The September file returned 404.
 
-## Scripted downloads (`etl/scripts/00_fetch_raw.py`, 2026-11-10)
+## Scripted downloads (`etl/scripts/00_fetch_raw.py`)
 
-Endpoints are in `etl/config/sources.yaml` and areas in `etl/config/areas.yaml`. All files are GeoJSON in EPSG:4326.
-Each flood file holds the features that intersect the LA's bounding box; P1.3 clips them to the boundary.
+The data was first fetched on 2026-11-10 in WGS84. It was **re-fetched on 2026-11-11 natively in British National Grid (EPSG:27700)** to remove a 2–3 m datum-shift error: pyproj here has no OSTN15 grid. See `docs/verification.md`.
+
+- Endpoints are in `etl/config/sources.yaml` and areas in `etl/config/areas.yaml`.
+- All files are GeoJSON in EPSG:27700, with a `crs` member so GeoPandas reads them correctly.
+- Each flood file holds the features intersecting the LA boundary's bbox, padded by 100 m. P1.3 clips them to the boundary.
 
 ### LA boundaries
-- `boundaries/lad_may2026_bgc_demo.geojson`: 4 features (E06000014, E07000145, E09000033, E09000013).
+- `boundaries/lad_may2026_bgc_demo.geojson`: 4 features (E06000014, E07000145, E09000033, E09000013), fetched with `outSR=27700`.
 - Source: ONS Local Authority Districts (May 2026) Boundaries UK BGC, hub item `43eddab36751466db7bb4006b242243c`.
 - Licence: OGL v3.0. Contains OS data © Crown copyright and database right; source: Office for National Statistics.
 
-### Flood layers (Environment Agency, OGL v3.0)
+### Flood layers (Environment Agency, OGL v3.0; `crs` and `bbox-crs` = EPSG:27700)
 
 | Layer | Dataset | York | Great Yarmouth | Westminster | Hammersmith and Fulham | Size |
 | --- | --- | --- | --- | --- | --- | --- |
-| `flood/rofrs/` (`risk_band`) | RoFRS NaFRA2, `96ab4342-82c1-4095-87f1-0082e8d84ef1` | 1,000 | 1,089 | 43 | 71 | 99 MB |
-| `flood/flood_zones/` (`flood_zone`) | Flood Map for Planning FZ2/3, `04532375-a198-476e-985e-0579a0a11b47` | 2,389 | 1,910 | 165 | 239 | 120 MB |
-| `flood/rofsw/` (`risk_band`) | RoFSW NaFRA2, `b5aaa28d-6eb9-460e-8d6f-43caa71fbe0e` | 1,386 | 1,186 | 216 | 162 | 509 MB |
+| `flood/rofrs/` | RoFRS NaFRA2, `96ab4342-82c1-4095-87f1-0082e8d84ef1` | 992 | 964 | 43 | 71 | 76 MB |
+| `flood/flood_zones/` | Flood Map for Planning FZ2/3, `04532375-a198-476e-985e-0579a0a11b47` | 2,346 | 1,678 | 158 | 235 | 93 MB |
+| `flood/rofsw/` | RoFSW NaFRA2, `b5aaa28d-6eb9-460e-8d6f-43caa71fbe0e` | 1,386 | 1,028 | 189 | 162 | 386 MB |
 
-The York RoFRS total of exactly 1,000 was cross-checked. Fetching the bounding box as two halves returned the same 1,000 feature IDs, so the count isn't a server cap.
+Counts differ slightly from the first fetch because the bbox is now the LA boundary's own extent in metres, rather than a WGS84 box. No layer reported a `numberMatched` mismatch.
 
 ## EPC (manual download by Surabhi, 2026-11-10)
 

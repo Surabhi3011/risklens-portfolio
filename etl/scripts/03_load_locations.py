@@ -2,7 +2,7 @@
 
 Inputs:  OS Open UPRN zip, ONSPD zip (paths in etl/config/sources.yaml), data/processed/boundaries.parquet
 Outputs: data/processed/uprn_locations.parquet  (uprn, x, y, lat, lon, la_code)
-         data/processed/postcodes.parquet       (postcode, lat, lon, la_code, lsoa21, terminated)
+         data/processed/postcodes.parquet       (postcode, lat, lon, x, y, la_code, lsoa21, terminated)
 
 OS Open UPRN has no LA field, so points are assigned to LAs by point-in-polygon on EPSG:27700
 coordinates after a cheap bounding-box pre-filter. Idempotent: outputs are overwritten.
@@ -65,15 +65,15 @@ def load_postcodes(cfg: dict[str, object], demo: set[str]) -> pd.DataFrame:
     log.info("ONSPD: %d postcodes read", len(raw))
     df = raw.rename(columns={v: k for k, v in cols.items()})
     df = df[df["la_code"].isin(demo)].copy()
-    df["lat"] = pd.to_numeric(df["lat"], errors="coerce")
-    df["lon"] = pd.to_numeric(df["lon"], errors="coerce")
+    for c in ("lat", "lon", "x", "y"):
+        df[c] = pd.to_numeric(df[c], errors="coerce")
     # ONSPD uses lat 99.999999 for postcodes without a grid reference.
     no_coords = df["lat"].isna() | (df["lat"] > 90)
     log.info("ONSPD: %d postcodes in demo LAs, %d dropped for missing coordinates", len(df), no_coords.sum())
     df = df[~no_coords]
     df["terminated"] = df["terminated"].notna() & (df["terminated"].str.strip() != "")
     df["postcode"] = df["postcode"].str.strip().str.upper()
-    return df[["postcode", "lat", "lon", "la_code", "lsoa21", "terminated"]].reset_index(drop=True)
+    return df[["postcode", "lat", "lon", "x", "y", "la_code", "lsoa21", "terminated"]].reset_index(drop=True)
 
 
 def main() -> None:

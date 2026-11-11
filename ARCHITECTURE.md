@@ -56,10 +56,19 @@ All sources are open data (OGL unless noted). Download raw files to `data/raw/<s
 | OS Open UPRN | CSV (GB) | UPRN, X/Y (EPSG:27700), lat, long; no LA field, so assigned by point-in-polygon | OGL |
 | ONS Postcode Directory (ONSPD) | CSV | pcds, lat, long, lsoa21cd, lad26cd (the LA column was `oslaua` in older releases), doterm | OGL; also contains Royal Mail, Gridlink, LPS, OS and ONS IPR (confirm the attribution wording from the user guide) |
 | OpenStreetMap via OpenFreeMap | Vector tiles (runtime) | basemap | ODbL; show attribution |
-| ONS Local Authority District boundaries (May 2026, BGC) | GeoJSON for the demo LAs (`00_fetch_raw.py`) | LAD26CD, LAD26NM | OGL; contains OS data |
+| ONS Local Authority District boundaries (May 2026, BGC) | GeoJSON for the demo LAs in EPSG:27700 (`00_fetch_raw.py`) | LAD26CD, LAD26NM | OGL; contains OS data |
 | EA flood WMS | Runtime map overlay only | — | OGL |
 
 **Excluded:** HM Land Registry Price Paid Data (address-data restrictions) and any paid or keyed service.
+
+**Coordinate reference systems.** All spatial joins run in British National Grid (EPSG:27700), and every input is obtained natively in that CRS:
+
+- Flood layers come from the EA OGC API with `crs` and `bbox-crs` set to EPSG:27700.
+- LA boundaries come from the ONS service with `outSR=27700`.
+- UPRN points use OS Open UPRN `X_COORDINATE` / `Y_COORDINATE`.
+- Postcode centroids use ONSPD `east1m` / `north1m`.
+
+The ETL never converts WGS84 to OSGB36 itself. Without the OSTN15 grid, pyproj falls back to an approximate Helmert shift with roughly 2–3 m error, which matters at flood-polygon edges. WGS84 lat/long is used only for the map display.
 
 ## 3. Data schemas
 

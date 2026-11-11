@@ -92,7 +92,8 @@ def build_uprn_epc(epc: pd.DataFrame, rec_agg: pd.DataFrame) -> pd.DataFrame:
 def build_postcode_lookup(postcodes: pd.DataFrame, epc: pd.DataFrame, uprn_flood: pd.DataFrame) -> pd.DataFrame:
     """Postcode fallback. Flood = worst over EPC-located UPRNs in the postcode plus the postcode centroid."""
     pc = postcodes.copy()
-    pts = gpd.GeoDataFrame(pc, geometry=gpd.points_from_xy(pc["lon"], pc["lat"]), crs="EPSG:4326").to_crs(BNG)
+    # ONSPD's own grid references (east1m/north1m): no WGS84 -> OSGB36 datum shift.
+    pts = gpd.GeoDataFrame(pc, geometry=gpd.points_from_xy(pc["x"], pc["y"]), crs=BNG)
     for col, layer in (("rofrs", "rofrs"), ("zone", "flood_zones"), ("rofsw", "rofsw")):
         polys = gpd.read_parquet(PROCESSED / "flood" / f"{layer}.parquet").to_crs(BNG)
         order = ZONE_ORDER if col == "zone" else LIKELIHOOD_ORDER

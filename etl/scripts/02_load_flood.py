@@ -32,6 +32,8 @@ log = logging.getLogger("02_load_flood")
 
 def load_boundaries(code_field: str, name_field: str) -> gpd.GeoDataFrame:
     gdf = gpd.read_file(RAW / "boundaries" / "lad_may2026_bgc_demo.geojson")
+    if gdf.crs is None or gdf.crs.to_epsg() != 27700:
+        raise RuntimeError(f"boundaries: expected EPSG:27700, got {gdf.crs}; re-run 00_fetch_raw.py --force")
     gdf = gdf.rename(columns={code_field: "la_code", name_field: "la_name"})[["la_code", "la_name", "geometry"]]
     return gdf.to_crs(BNG)
 
@@ -48,9 +50,9 @@ def clip_layer(
     path: Path, boundary: gpd.GeoDataFrame, band_field: str, band_map: dict[str, str]
 ) -> tuple[gpd.GeoDataFrame, int]:
     raw = gpd.read_file(path)
-    if raw.crs is None:
-        raw = raw.set_crs("EPSG:4326")
-    raw = raw.to_crs(BNG)
+    if raw.crs is None or raw.crs.to_epsg() != 27700:
+        # 00_fetch_raw.py requests EPSG:27700 natively; refuse anything else rather than reproject approximately.
+        raise RuntimeError(f"{path.name}: expected EPSG:27700 raw data, got {raw.crs}; re-run 00_fetch_raw.py --force")
     invalid = ~raw.geometry.is_valid
     if invalid.any():
         log.info("%s: repairing %d invalid geometries with buffer(0)", path.name, invalid.sum())

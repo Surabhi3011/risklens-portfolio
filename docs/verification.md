@@ -64,7 +64,19 @@ The gov.uk "check long term flood risk" postcode search is behind a CAPTCHA, so 
 - Re-fetching the features natively in EPSG:27700 from the EA OGC API, with no reprojection, also gives Medium at both points. Re-querying the WMS with `BUFFER=0` still gives High.
 - Conclusion: the WMS view and the published OGL vector product differ by about 2 m at polygon edges. The dashboard follows the vector product. This is within the "indicative screening" framing, but it affects points close to surface-water boundaries.
 
-**Accuracy issue found in passing.** pyproj in the ETL lacks the OSTN15 transformation grid, so WGS84 → EPSG:27700 conversions use a Helmert approximation with roughly 2–3 m error. It affects the flood polygons and LA boundaries. It did not cause the two mismatches above, which reproduce in native 27700. Recommended follow-up: fetch the flood layers natively in EPSG:27700 (the OGC API supports `crs`/`bbox-crs`), or install the OSTN15 grid. Then re-run the pipeline.
+**Accuracy issue found in passing: fixed on 2026-11-11.** pyproj in the ETL lacks the OSTN15 transformation grid, so WGS84 → EPSG:27700 conversions fell back to a Helmert approximation with roughly 2–3 m error. That affected the flood polygons and LA boundaries. The fix: `00_fetch_raw.py` now requests the flood layers (`crs`/`bbox-crs`) and LA boundaries (`outSR`) natively in EPSG:27700, and postcode centroids use ONSPD `east1m`/`north1m`. The ETL no longer performs any datum shift. Measured impact:
+
+| What | Changed |
+| --- | --- |
+| UPRN bands, rivers and sea | 1,511 of 583,328 (0.26%) |
+| UPRN bands, flood zones | 1,799 (0.31%) |
+| UPRN bands, surface water | 14,040 (2.41%; finer polygons, more edges) |
+| UPRNs on LA borders reassigned or now outside | 200 |
+| Demo portfolio (same 180 properties) | 3 assets' surface-water band: RL-0053 medium → low (score 50 → 33, still Watch), RL-0067 none → low, RL-0091 low → medium. No tier changed. |
+
+After the fix, the flood spot-check is unchanged at 18/20. The two remaining edge cases are the WMS-vs-vector difference described above, not the datum shift. pytest (45), vitest (59) and the browser upload-parity check (180/180) all pass on the regenerated data.
+
+To keep asset IDs stable when data is refreshed, `06_sample_portfolio.py` now reuses the published `portfolio_sample.csv`, failing if any asset no longer resolves. Pass `--resample` to draw a new sample.
 
 ### Manual gov.uk check (to do by hand)
 
