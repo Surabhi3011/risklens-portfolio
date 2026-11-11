@@ -1,3 +1,4 @@
+import { RotateCcw, SlidersHorizontal } from 'lucide-react';
 import { useMemo } from 'react';
 import { BANDS } from '../lib/aggregate';
 import { type Filters as FilterState, isFiltered } from '../lib/filters';
@@ -22,6 +23,10 @@ export function Filters({ assets, filters, shown, onChange, onReset }: FiltersPr
 
   return (
     <section className={styles.bar} aria-label="Filters">
+      <span className={styles.heading}>
+        <SlidersHorizontal size={16} strokeWidth={2} aria-hidden="true" />
+        Filters
+      </span>
       <label className={styles.field}>
         <span>Local authority</span>
         <select
@@ -90,6 +95,7 @@ export function Filters({ assets, filters, shown, onChange, onReset }: FiltersPr
         </span>
         {isFiltered(filters) && (
           <button type="button" className={styles.reset} onClick={onReset}>
+            <RotateCcw size={14} strokeWidth={2} aria-hidden="true" />
             Clear filters
           </button>
         )}

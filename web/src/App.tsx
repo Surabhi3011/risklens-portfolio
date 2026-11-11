@@ -1,3 +1,4 @@
+import { BarChart3, MapPinned, Table2 } from 'lucide-react';
 import { lazy, Suspense, useEffect, useMemo, useState } from 'react';
 import styles from './App.module.css';
 import { AssetDrawer } from './components/AssetDrawer';
@@ -7,6 +8,7 @@ import { Filters } from './components/Filters';
 import { Footer } from './components/Footer';
 import { Header } from './components/Header';
 import { KpiRow } from './components/KpiRow';
+import { PanelHeader } from './components/PanelHeader';
 import { SummaryCard } from './components/SummaryCard';
 import { UploadBanner } from './components/UploadBanner';
 import { UploadDialog } from './components/UploadDialog';
@@ -130,22 +132,43 @@ export default function App() {
             <KpiRow assets={visible} />
             <SummaryCard assets={visible} rules={rules} />
             <div className={styles.grid}>
-              <section className={styles.mapPanel} aria-label="Risk map">
-                <DeferredMount fallback={<p className={styles.placeholder}>Loading map…</p>}>
-                  <Suspense fallback={<p className={styles.placeholder}>Loading map…</p>}>
-                    <RiskMap assets={visible} selectedId={selectedId} onSelect={select} />
-                  </Suspense>
-                </DeferredMount>
+              <section className={styles.panel} aria-label="Risk map">
+                <PanelHeader
+                  icon={MapPinned}
+                  title="Risk map"
+                  subtitle="Assets by risk tier, with Environment Agency flood layers"
+                />
+                <div className={styles.mapBody}>
+                  <DeferredMount fallback={<div className={styles.skeleton}>Map loads as you scroll to it…</div>}>
+                    <Suspense fallback={<p className={styles.placeholder}>Loading map…</p>}>
+                      <RiskMap assets={visible} selectedId={selectedId} onSelect={select} />
+                    </Suspense>
+                  </DeferredMount>
+                </div>
               </section>
-              <section className={styles.chartPanel} aria-label="Charts">
-                <DeferredMount fallback={<p className={styles.placeholder}>Loading charts…</p>}>
-                  <Suspense fallback={<p className={styles.placeholder}>Loading charts…</p>}>
-                    <ChartsPanel assets={visible} rules={rules} />
-                  </Suspense>
-                </DeferredMount>
+              <section className={styles.panel} aria-label="Charts">
+                <PanelHeader icon={BarChart3} title="EPC and compliance" subtitle="Band mix and deadlines" />
+                <div className={styles.chartBody}>
+                  <DeferredMount fallback={<div className={styles.skeleton}>Charts load as you scroll to them…</div>}>
+                    <Suspense fallback={<p className={styles.placeholder}>Loading charts…</p>}>
+                      <ChartsPanel assets={visible} rules={rules} />
+                    </Suspense>
+                  </DeferredMount>
+                </div>
               </section>
             </div>
-            <section className={styles.tablePanel} aria-label="Assets" id="asset-table" tabIndex={-1}>
+            <section
+              className={`${styles.panel} ${styles.tablePanel}`}
+              aria-label="Assets"
+              id="asset-table"
+              tabIndex={-1}
+            >
+              <PanelHeader
+                icon={Table2}
+                title="Assets"
+                subtitle="Select a row for details"
+                aside={<span className={styles.count}>{visible.length} shown</span>}
+              />
               <AssetTable
                 assets={visible}
                 rules={rules}

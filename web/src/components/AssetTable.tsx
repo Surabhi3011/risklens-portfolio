@@ -145,7 +145,7 @@ export function AssetTable({ assets, rules, sort, selectedId, onSort, onSelect }
                   {a.flood.zone !== 'none' && <span className={styles.sub}>{ZONE_LABEL[a.flood.zone]}</span>}
                 </td>
                 <td>
-                  <span className={styles.tier}>
+                  <span className={`${styles.tier} ${styles[`tier_${a.tier}`] ?? ''}`}>
                     <span className={styles.dot} style={{ background: TIER_COLOUR[a.tier] }} aria-hidden="true" />
                     {TIER_LABEL[a.tier]}
                   </span>

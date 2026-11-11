@@ -133,3 +133,16 @@ Fixes:
 - **Range requests on Pages:** supported. `Range: bytes=0-1023` on `data/uprn_epc.parquet` returns `206 Partial Content` (`Content-Range: bytes 0-1023/7475517`).
 - **Assets:** every lazy chunk returns 200, including the map, charts, PDF export, the DuckDB module, both DuckDB wasm and worker builds, and the MapLibre worker (served as `text/javascript`).
 - **Upload on the live site:** the sample CSV gives 180/180 matched by UPRN. A 500-row upload took 1.2 s once DuckDB was loaded. The very first upload in a fresh browser took 12.5 s, mostly the one-off download of the ~8 MB (gzip) DuckDB wasm plus the Parquet lookups. The download starts when the upload dialog opens, so in real use it overlaps with choosing a file.
+
+## 6. UI redesign (2026-11-11)
+
+The dashboard was restyled with a token-based design system: cool neutrals, the brand blue as the single accent, soft tier tints that are always paired with a label, and Lucide icons (ISC licence) in the header, filters, KPI cards and panel headers.
+
+Lighthouse on the production build afterwards:
+
+| Run | Performance | Accessibility | Best practices | CLS |
+| --- | --- | --- | --- | --- |
+| Mobile (3 runs) | 99–100 | 100 | 96 | 0 |
+| Desktop (5 runs) | 72–87 | 100 | 96 | 0 |
+
+**Desktop performance is now below the earlier 92.** With the more compact layout, about 70% of the map panel is visible in Lighthouse's 1350×940 desktop viewport at load, so MapLibre mounts immediately. Its single ~300 ms main-thread task dominates Total Blocking Time. Deferring the map further would only game the audit, because the map is genuinely visible. LCP (about 1.0 s) and CLS (0) are unaffected. The map and charts still load lazily when below the fold, which covers all phone layouts.
