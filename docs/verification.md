@@ -146,3 +146,5 @@ Lighthouse on the production build afterwards:
 | Desktop (5 runs) | 72–87 | 100 | 96 | 0 |
 
 **Desktop performance is now below the earlier 92.** With the more compact layout, about 70% of the map panel is visible in Lighthouse's 1350×940 desktop viewport at load, so MapLibre mounts immediately. Its single ~300 ms main-thread task dominates Total Blocking Time. Deferring the map further would only game the audit, because the map is genuinely visible. LCP (about 1.0 s) and CLS (0) are unaffected. The map and charts still load lazily when below the fold, which covers all phone layouts.
+
+**Decision (Surabhi, 2026-11-11):** accept the lower desktop performance score and keep the map loading automatically. A click-to-load map was offered as an alternative and declined.
