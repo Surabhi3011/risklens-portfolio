@@ -65,7 +65,8 @@ Three phases, roughly one week each, part-time. Work top to bottom. Each task ha
   - Run Lighthouse (performance and accessibility above 90).
   - Check that no address strings appear in `web/dist`.
   - Note (2026-11-11): results in `docs/verification.md`. EPC register 20/20; flood 18/20 against the EA WMS (2 surface-water edge cases explained); Lighthouse mobile 97/100, desktop 92/100; dist address check passed. The manual gov.uk flood check (CAPTCHA) is still open.
-- [ ] **P3.6 Deploy.** Add a GitHub Actions workflow that builds `web/` to GitHub Pages and sets the Vite `base`. Confirm the Parquet files load on the live site.
+- [x] **P3.6 Deploy.** Add a GitHub Actions workflow that builds `web/` to GitHub Pages and sets the Vite `base`. Confirm the Parquet files load on the live site.
+  - Note (2026-11-11): live at https://surabhi3011.github.io/risklens-portfolio/. Pages serves range requests (206); a live 500-row upload takes 1.2 s once DuckDB is loaded. See `docs/verification.md` §5.
 - [ ] **P3.7 README.** Cover what it is, a screenshot, the data sources with licences, how to run the ETL, and a limitations section (demo areas only, indicative costs, announced rules).
 
 ## Later (not in this build)

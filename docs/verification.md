@@ -126,3 +126,10 @@ Fixes:
 
 - **Pattern scan:** all 24 non-binary files in `web/dist` (data, JS, CSS, HTML) were scanned for street-address patterns and forbidden column names. None were found.
 - **Data files:** `dist/data/*` is byte-identical to `web/public/data/*`. In P1.9 those files were cross-checked against all 568,785 raw EPC address strings, with no matches.
+
+## 5. Live deployment (P3.6, 2026-11-11)
+
+- **Site:** https://surabhi3011.github.io/risklens-portfolio/. It is deployed by `.github/workflows/deploy.yml`, which runs lint, typecheck and tests, then builds with `VITE_BASE=/risklens-portfolio/`. First run: build 81 s, deploy 9 s.
+- **Range requests on Pages:** supported. `Range: bytes=0-1023` on `data/uprn_epc.parquet` returns `206 Partial Content` (`Content-Range: bytes 0-1023/7475517`).
+- **Assets:** every lazy chunk returns 200, including the map, charts, PDF export, the DuckDB module, both DuckDB wasm and worker builds, and the MapLibre worker (served as `text/javascript`).
+- **Upload on the live site:** the sample CSV gives 180/180 matched by UPRN. A 500-row upload took 1.2 s once DuckDB was loaded. The very first upload in a fresh browser took 12.5 s, mostly the one-off download of the ~8 MB (gzip) DuckDB wasm plus the Parquet lookups. The download starts when the upload dialog opens, so in real use it overlaps with choosing a file.
