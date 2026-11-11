@@ -7,6 +7,7 @@ import type {
   Asset,
   Band,
   ComplianceStatus,
+  CostSource,
   FloodZone,
   Likelihood,
   MatchLevel,
@@ -36,6 +37,7 @@ export interface ScoreResult {
   scores: Asset['scores'];
   tier: Tier;
   upgrade_cost_mid_gbp: number | null;
+  upgrade_cost_source: CostSource | null;
 }
 
 const pad = (n: number, width: number): string => String(n).padStart(width, '0');
@@ -122,15 +124,15 @@ export function tierFor(total: number, tiers: Rules['tiers']): Tier {
   return 'low';
 }
 
-/** Indicative upgrade cost. 0 when no rule is failed; otherwise sum of rec cost_mid, then the config fallback, else null. */
-function upgradeCost(a: ScoreInput, status: ComplianceStatus, rules: Rules): number | null {
-  if (status === 'compliant') return 0;
+/** Indicative upgrade cost and its source: 0 when no rule is failed; else recommendation costs, the fallback, or null. */
+function upgradeCost(a: ScoreInput, status: ComplianceStatus, rules: Rules): [number | null, CostSource | null] {
+  if (status === 'compliant') return [0, 'not_required'];
   if (status === 'fails_current' || status === 'fails_future') {
     const costs = a.rec_costs_mid.filter((c): c is number => c !== null);
-    if (costs.length > 0) return costs.reduce((sum, c) => sum + c, 0);
+    if (costs.length > 0) return [costs.reduce((sum, c) => sum + c, 0), 'recommendations'];
   }
   const fallback = rules.fallback_upgrade_cost_gbp[a.use];
-  return typeof fallback === 'number' ? fallback : null;
+  return typeof fallback === 'number' ? [fallback, 'fallback'] : [null, null];
 }
 
 export function scoreAsset(a: ScoreInput, rules: Rules): ScoreResult {
@@ -138,10 +140,12 @@ export function scoreAsset(a: ScoreInput, rules: Rules): ScoreResult {
   const f = scoreFlood(a.flood);
   const d = scoreDataQuality(a, rules);
   const total = totalScore(c, f, d, rules.weights);
+  const [cost, costSource] = upgradeCost(a, compliance.status, rules);
   return {
     compliance,
     scores: { compliance: c, flood: f, data_quality: d, total },
     tier: tierFor(total, rules.tiers),
-    upgrade_cost_mid_gbp: upgradeCost(a, compliance.status, rules),
+    upgrade_cost_mid_gbp: cost,
+    upgrade_cost_source: costSource,
   };
 }

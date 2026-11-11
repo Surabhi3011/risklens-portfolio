@@ -176,7 +176,19 @@ export function AssetDrawer({ asset: a, rules, onClose }: AssetDrawerProps) {
           )}
           <p className={styles.total}>
             Indicative upgrade cost:{' '}
-            <strong>{a.upgrade_cost_mid_gbp === null ? 'cost unknown' : formatGbp(a.upgrade_cost_mid_gbp)}</strong>
+            <strong>
+              {a.upgrade_cost_source === 'not_required'
+                ? 'none required'
+                : a.upgrade_cost_mid_gbp === null
+                  ? 'cost unknown'
+                  : formatGbp(a.upgrade_cost_mid_gbp)}
+            </strong>
+            {a.upgrade_cost_source === 'fallback' && (
+              <span className={styles.muted}>
+                Government average for privately rented homes (DESNZ impact assessment, 2026). The certificate
+                gives no costed recommendations.
+              </span>
+            )}
           </p>
         </section>
 

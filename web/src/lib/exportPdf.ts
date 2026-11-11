@@ -173,7 +173,10 @@ export function buildSummaryPdf(ctx: PdfContext): jsPDF {
       label: 'Upgrade (indicative)',
       w: CONTENT_W - 138,
       right: true,
-      get: (a) => (a.upgrade_cost_mid_gbp === null ? 'Cost unknown' : formatGbp(a.upgrade_cost_mid_gbp)),
+      get: (a) =>
+        a.upgrade_cost_mid_gbp === null
+          ? 'Cost unknown'
+          : `${formatGbp(a.upgrade_cost_mid_gbp)}${a.upgrade_cost_source === 'fallback' ? '*' : ''}`,
     },
   ];
   const rowH = 6.2;
@@ -215,7 +218,8 @@ export function buildSummaryPdf(ctx: PdfContext): jsPDF {
   doc.setFontSize(7);
   doc.setTextColor(...MUTED);
   doc.text(
-    `Tier "${TIER_LABEL.act}" = weighted score of ${String(rules.tiers.act)} or more (compliance, flood and data quality).`,
+    `Tier "${TIER_LABEL.act}" = weighted score of ${String(rules.tiers.act)} or more (compliance, flood and data quality). ` +
+      '* Government average (DESNZ, 2026) where the EPC gives no costed recommendations.',
     M,
     y + 4,
   );

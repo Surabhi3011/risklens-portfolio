@@ -155,7 +155,10 @@ export function AssetTable({ assets, rules, sort, selectedId, onSort, onSelect }
                   {a.upgrade_cost_mid_gbp === null ? (
                     <span className={styles.muted}>Cost unknown</span>
                   ) : (
-                    formatGbpCompact(a.upgrade_cost_mid_gbp)
+                    <>
+                      {formatGbpCompact(a.upgrade_cost_mid_gbp)}
+                      {a.upgrade_cost_source === 'fallback' && <span className={styles.sub}>DESNZ avg</span>}
+                    </>
                   )}
                 </td>
                 <td className={`${styles.wide} ${styles.num}`}>

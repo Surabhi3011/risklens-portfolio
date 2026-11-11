@@ -15,6 +15,7 @@ interface Card {
 
 export function KpiRow({ assets }: KpiRowProps) {
   const k = computeKpis(assets);
+  const fallbackCost = k.upgradeCostFallback > 0 ? ` · ${formatInt(k.upgradeCostFallback)} at DESNZ average` : '';
   const unknownCost = k.upgradeCostUnknown > 0 ? ` · ${formatInt(k.upgradeCostUnknown)} cost unknown` : '';
   const unknownValue = k.valueUnknown > 0 ? ` · ${formatInt(k.valueUnknown)} not valued` : '';
 
@@ -25,7 +26,7 @@ export function KpiRow({ assets }: KpiRowProps) {
     {
       label: 'Upgrade budget',
       value: formatGbpCompact(k.upgradeBudget),
-      note: `Indicative, from EPC recommendations${unknownCost}`,
+      note: `Indicative, from EPC recommendations${fallbackCost}${unknownCost}`,
     },
     {
       label: 'Value exposed',

@@ -165,6 +165,7 @@ export function enrichRow(row: PortfolioRow, j: JoinedRow, ctx: EnrichContext): 
       tier: s.tier,
       recommendations: top3,
       upgrade_cost_mid_gbp: s.upgrade_cost_mid_gbp,
+      upgrade_cost_source: s.upgrade_cost_source,
       value_gbp: value,
       value_source: valueSource,
       lon: Math.round(lon * 1e6) / 1e6,

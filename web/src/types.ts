@@ -9,6 +9,8 @@ export type FloodZone = '3' | '2' | 'none';
 export type ComplianceStatus = 'compliant' | 'fails_future' | 'fails_current' | 'no_epc';
 export type Tier = 'low' | 'watch' | 'act';
 export type ScoreValue = 0 | 50 | 100;
+/** Where an indicative upgrade cost comes from (null = no cost available). */
+export type CostSource = 'recommendations' | 'fallback' | 'not_required';
 
 export interface Recommendation {
   summary: string;
@@ -39,6 +41,7 @@ export interface Asset {
   tier: Tier;
   recommendations: Recommendation[];
   upgrade_cost_mid_gbp: number | null;
+  upgrade_cost_source: CostSource | null;
   value_gbp: number | null;
   value_source: 'client' | 'hpi' | null;
 }

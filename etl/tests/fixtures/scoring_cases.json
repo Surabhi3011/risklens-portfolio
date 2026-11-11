@@ -1,5 +1,5 @@
 {
-  "description": "Hand-checked scoring cases (ARCHITECTURE.md §4) shared by pytest and vitest. Rules come from web/public/config/rules.json; as_of 2026-11-09.",
+  "description": "Hand-checked scoring cases (ARCHITECTURE.md §4) shared by pytest and vitest. Rules come from web/public/config/rules.json; as_of 2026-11-09. Residential fallback upgrade cost is 5400 (rules.json); commercial fallback is TODO.",
   "rules_as_of": "2026-11-09",
   "cases": [
     {
@@ -35,7 +35,8 @@
           "total": 25
         },
         "tier": "low",
-        "upgrade_cost_mid_gbp": 1500.0
+        "upgrade_cost_mid_gbp": 1500.0,
+        "upgrade_cost_source": "recommendations"
       }
     },
     {
@@ -71,7 +72,8 @@
           "total": 85
         },
         "tier": "act",
-        "upgrade_cost_mid_gbp": 2000.0
+        "upgrade_cost_mid_gbp": 2000.0,
+        "upgrade_cost_source": "recommendations"
       }
     },
     {
@@ -104,12 +106,13 @@
           "total": 0
         },
         "tier": "low",
-        "upgrade_cost_mid_gbp": 0.0
+        "upgrade_cost_mid_gbp": 0.0,
+        "upgrade_cost_source": "not_required"
       }
     },
     {
       "name": "rented_no_epc_no_match",
-      "why": "no EPC while rented -> 100; no match -> DQ 100; 50+15 = 65; fallback TODO -> null",
+      "why": "no EPC while rented -> 100; no match -> DQ 100; 50+15 = 65; residential fallback 5400 (DESNZ average)",
       "input": {
         "use": "residential",
         "tenure": "rented",
@@ -137,12 +140,13 @@
           "total": 65
         },
         "tier": "act",
-        "upgrade_cost_mid_gbp": null
+        "upgrade_cost_mid_gbp": 5400.0,
+        "upgrade_cost_source": "fallback"
       }
     },
     {
       "name": "rented_expired_epc",
-      "why": "expired counts as no EPC; RoFRS medium -> 50; 50+17.5+15 = 82.5 -> 83 (half-up); not failing a rule -> fallback TODO -> null",
+      "why": "expired counts as no EPC; RoFRS medium -> 50; 50+17.5+15 = 82.5 -> 83 (half-up); not failing a rule -> residential fallback 5400 (DESNZ average)",
       "input": {
         "use": "residential",
         "tenure": "rented",
@@ -172,12 +176,13 @@
           "total": 83
         },
         "tier": "act",
-        "upgrade_cost_mid_gbp": null
+        "upgrade_cost_mid_gbp": 5400.0,
+        "upgrade_cost_source": "fallback"
       }
     },
     {
       "name": "commercial_C_1500m2_fails_2031",
-      "why": "2031 B rule applies at >= 1000 m2; no costed recs and fallback TODO -> null",
+      "why": "2031 B rule applies at >= 1000 m2; no costed recs and commercial fallback TODO -> null",
       "input": {
         "use": "commercial",
         "tenure": "rented",
@@ -208,7 +213,8 @@
           "total": 25
         },
         "tier": "low",
-        "upgrade_cost_mid_gbp": null
+        "upgrade_cost_mid_gbp": null,
+        "upgrade_cost_source": null
       }
     },
     {
@@ -241,7 +247,8 @@
           "total": 0
         },
         "tier": "low",
-        "upgrade_cost_mid_gbp": 0.0
+        "upgrade_cost_mid_gbp": 0.0,
+        "upgrade_cost_source": "not_required"
       }
     },
     {
@@ -274,7 +281,8 @@
           "total": 75
         },
         "tier": "act",
-        "upgrade_cost_mid_gbp": null
+        "upgrade_cost_mid_gbp": null,
+        "upgrade_cost_source": null
       }
     },
     {
@@ -307,12 +315,13 @@
           "total": 43
         },
         "tier": "watch",
-        "upgrade_cost_mid_gbp": 0.0
+        "upgrade_cost_mid_gbp": 0.0,
+        "upgrade_cost_source": "not_required"
       }
     },
     {
       "name": "res_rented_E_6y_rofrs_low",
-      "why": "E meets E, fails C; RoFRS low -> 50; EPC 5-10y -> DQ 50; 25+17.5+7.5 = 50; no recs -> fallback TODO -> null",
+      "why": "E meets E, fails C; RoFRS low -> 50; EPC 5-10y -> DQ 50; 25+17.5+7.5 = 50; no recs -> residential fallback 5400 (DESNZ average)",
       "input": {
         "use": "residential",
         "tenure": "rented",
@@ -340,7 +349,8 @@
           "total": 50
         },
         "tier": "watch",
-        "upgrade_cost_mid_gbp": null
+        "upgrade_cost_mid_gbp": 5400.0,
+        "upgrade_cost_source": "fallback"
       }
     },
     {
@@ -373,7 +383,8 @@
           "total": 18
         },
         "tier": "low",
-        "upgrade_cost_mid_gbp": 0.0
+        "upgrade_cost_mid_gbp": 0.0,
+        "upgrade_cost_source": "not_required"
       }
     },
     {
@@ -406,7 +417,8 @@
           "total": 0
         },
         "tier": "low",
-        "upgrade_cost_mid_gbp": 0.0
+        "upgrade_cost_mid_gbp": 0.0,
+        "upgrade_cost_source": "not_required"
       }
     },
     {
@@ -441,7 +453,8 @@
           "total": 33
         },
         "tier": "watch",
-        "upgrade_cost_mid_gbp": 225.0
+        "upgrade_cost_mid_gbp": 225.0,
+        "upgrade_cost_source": "recommendations"
       }
     },
     {
@@ -476,7 +489,8 @@
           "total": 65
         },
         "tier": "act",
-        "upgrade_cost_mid_gbp": null
+        "upgrade_cost_mid_gbp": 5400.0,
+        "upgrade_cost_source": "fallback"
       }
     },
     {
@@ -509,7 +523,8 @@
           "total": 25
         },
         "tier": "low",
-        "upgrade_cost_mid_gbp": 0.0
+        "upgrade_cost_mid_gbp": 0.0,
+        "upgrade_cost_source": "not_required"
       }
     },
     {
@@ -545,7 +560,8 @@
           "total": 43
         },
         "tier": "watch",
-        "upgrade_cost_mid_gbp": 1000.0
+        "upgrade_cost_mid_gbp": 1000.0,
+        "upgrade_cost_source": "recommendations"
       }
     },
     {
@@ -578,7 +594,8 @@
           "total": 0
         },
         "tier": "low",
-        "upgrade_cost_mid_gbp": 0.0
+        "upgrade_cost_mid_gbp": 0.0,
+        "upgrade_cost_source": "not_required"
       }
     },
     {
@@ -611,7 +628,8 @@
           "total": 15
         },
         "tier": "low",
-        "upgrade_cost_mid_gbp": 0.0
+        "upgrade_cost_mid_gbp": 0.0,
+        "upgrade_cost_source": "not_required"
       }
     }
   ]

@@ -178,6 +178,9 @@
 
 .total {
   margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
 }
 
 /* Mobile: bottom sheet. */

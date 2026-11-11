@@ -84,10 +84,14 @@ export function portfolioSummary(list: readonly Asset[], rules: Rules): string[]
   );
 
   if (k.nonCompliant > 0) {
-    const unknown = k.upgradeCostUnknown > 0 ? `; ${formatInt(k.upgradeCostUnknown)} more have no published cost` : '';
+    const fallback =
+      k.upgradeCostFallback > 0
+        ? `, ${formatInt(k.upgradeCostFallback)} of them at the government average cost because the EPC gives none`
+        : '';
+    const unknown = k.upgradeCostUnknown > 0 ? `; ${formatInt(k.upgradeCostUnknown)} more have no cost estimate` : '';
     out.push(
       costed > 0
-        ? `The indicative upgrade budget from EPC recommendations is ${formatGbpCompact(k.upgradeBudget)} across ${assets(costed)}${unknown}.`
+        ? `The indicative upgrade budget is ${formatGbpCompact(k.upgradeBudget)} across ${assets(costed)}${fallback}${unknown}.`
         : k.nonCompliant === 1
           ? 'The one non-compliant asset has no published cost estimate.'
           : `None of the ${formatInt(k.nonCompliant)} non-compliant assets has a published cost estimate.`,

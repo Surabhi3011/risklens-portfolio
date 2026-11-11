@@ -18,6 +18,8 @@ export interface Kpis {
   upgradeBudget: number;
   /** Non-compliant assets with no cost (no costed recommendations and no configured fallback). */
   upgradeCostUnknown: number;
+  /** Non-compliant assets costed with the configured fallback average (no costed recommendations). */
+  upgradeCostFallback: number;
   /** Total value of non-compliant assets that have a value. */
   valueExposed: number;
   /** Non-compliant assets with no value (commercial, or no HPI match). */
@@ -36,6 +38,7 @@ export function computeKpis(assets: readonly Asset[]): Kpis {
   let nonCompliant = 0;
   let upgradeBudget = 0;
   let upgradeCostUnknown = 0;
+  let upgradeCostFallback = 0;
   let valueExposed = 0;
   let valueUnknown = 0;
   for (const a of assets) {
@@ -45,6 +48,7 @@ export function computeKpis(assets: readonly Asset[]): Kpis {
       nonCompliant += 1;
       if (a.upgrade_cost_mid_gbp === null) upgradeCostUnknown += 1;
       else upgradeBudget += a.upgrade_cost_mid_gbp;
+      if (a.upgrade_cost_source === 'fallback') upgradeCostFallback += 1;
       if (a.value_gbp === null) valueUnknown += 1;
       else valueExposed += a.value_gbp;
     }
@@ -58,6 +62,7 @@ export function computeKpis(assets: readonly Asset[]): Kpis {
     nonCompliant,
     upgradeBudget,
     upgradeCostUnknown,
+    upgradeCostFallback,
     valueExposed,
     valueUnknown,
   };

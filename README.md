@@ -115,7 +115,8 @@ This is **indicative screening only**. It is not a valuation, a flood risk asses
 - **The portfolio is synthetic.** It is a sample of real, private-rented EPC records, not a real landlord's holdings.
 - **Upgrade costs are indicative.**
   - They are the midpoints of the cost ranges on the EPC recommendations, summed per asset.
-  - Non-domestic EPCs publish no costs, and there is no configured fallback (`fallback_upgrade_cost_gbp` is `TODO` in `rules.json`). Those assets show "cost unknown".
+  - Residential assets with no costed recommendations use the government average of £5,400 per property (DESNZ impact assessment, privately rented homes government response, January 2026). The dashboard labels these as a DESNZ average.
+  - Non-domestic EPCs publish no costs, and there is no open per-building estimate (`fallback_upgrade_cost_gbp.commercial` is `TODO` in `rules.json`). Those assets show "cost unknown".
 - **The 2031 non-domestic EPC B requirement is announced, subject to legislation.** The date is a placeholder and is shown as "2031" only. The October 2030 domestic EPC C deadline is confirmed policy, but new EPC metrics may change how "C" is measured.
 - **EPCs can be out of date.**
   - The dashboard uses the latest certificate per property. Certificates older than 10 years count as expired.

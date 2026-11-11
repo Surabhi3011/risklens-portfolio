@@ -26,6 +26,7 @@ function mk(id: string, over: Partial<Pick<Asset, 'la_code' | 'use' | 'tier' | '
     tier: over.tier ?? 'low',
     recommendations: [],
     upgrade_cost_mid_gbp: 0,
+    upgrade_cost_source: 'not_required',
     value_gbp: over.value_gbp === undefined ? 100 : over.value_gbp,
     value_source: null,
   };

@@ -9,5 +9,9 @@
   "weights": { "compliance": 0.5, "flood": 0.35, "data_quality": 0.15 },
   "tiers": { "watch": 30, "act": 60 },
   "data_quality": { "epc_fresh_years": 5, "epc_valid_years": 10 },
-  "fallback_upgrade_cost_gbp": { "residential": "TODO", "commercial": "TODO" }
+  "fallback_upgrade_cost_gbp": { "residential": 5400, "commercial": "TODO" },
+  "fallback_upgrade_cost_source": {
+    "residential": "DESNZ, Improving the energy performance of privately rented homes: Government response (January 2026), pp. 7 and 19: impact assessment estimate of average spend per property to reach the 2030 standard (cost cap GBP 10,000). https://assets.publishing.service.gov.uk/media/69722b193f2908a349040547/prs-homes-energy-performance-government-response.pdf",
+    "commercial": "TODO: no open per-building or per-m2 estimate found (checked 2019 and 2021 non-domestic MEES consultations and BEIS research paper 2021/009)."
+  }
 }

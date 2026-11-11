@@ -143,6 +143,7 @@ interface Asset {
   tier: 'low' | 'watch' | 'act';
   recommendations: { summary: string; cost_low: number | null; cost_high: number | null }[]; // top 3
   upgrade_cost_mid_gbp: number | null;
+  upgrade_cost_source: 'recommendations' | 'fallback' | 'not_required' | null;
   value_gbp: number | null; value_source: 'client' | 'hpi' | null;
 }
 type Band = 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G';
@@ -175,7 +176,8 @@ Target a total size under 25 MB. If the files are larger, reduce the demo areas.
   "weights": { "compliance": 0.5, "flood": 0.35, "data_quality": 0.15 },
   "tiers": { "watch": 30, "act": 60 },
   "data_quality": { "epc_fresh_years": 5, "epc_valid_years": 10 },
-  "fallback_upgrade_cost_gbp": { "residential": "TODO", "commercial": "TODO" }
+  "fallback_upgrade_cost_gbp": { "residential": 5400, "commercial": "TODO" },
+  "fallback_upgrade_cost_source": { "residential": "DESNZ PRS government response (Jan 2026), impact assessment average spend per property", "commercial": "TODO" }
 }
 ```
 
@@ -198,6 +200,8 @@ Scoring:
   - 0 for compliant (and owner-occupied) assets.
   - For assets failing a rule, the sum of `cost_mid` over all the certificate's recommendations.
   - If none are available (and always for `no_epc`), use the fallback from config. If the fallback is `TODO`, the value is null and the UI shows "cost unknown".
+  - `upgrade_cost_source` records which branch applied (`recommendations`, `fallback`, `not_required`, or null). The UI labels fallback figures as a government average.
+  - The residential fallback is £5,400: the average spend per property to reach the 2030 standard, from the DESNZ impact assessment cited in the January 2026 government response on privately rented homes (cost cap £10,000). No open per-building figure was found for non-domestic buildings, so the commercial fallback stays `TODO`.
 - **Rules with `min_floor_area_m2`** apply only when the floor area is known and at least that size.
 - **Data-quality age** is measured against `as_of`. "Under 5 years" means lodged strictly after `as_of` minus 5 years.
 - **Shared fixture:** the cases in `etl/tests/fixtures/scoring_cases.json` are hand-checked, and both pytest and vitest run them.

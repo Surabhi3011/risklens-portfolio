@@ -17,7 +17,7 @@ describe('portfolioSummary', () => {
       '14 assets need action now: 1 fails the minimum standard in force today and 13 are let without a valid EPC.',
       'On current certificates, 70 assets would be non-compliant by October 2030, rising to 72 by 2031 if the announced non-domestic requirement is legislated.',
       '42 assets (23%) are in Flood Zone 3, and 48 have a high flood risk from at least one source.',
-      'The indicative upgrade budget from EPC recommendations is £924.4k across 56 assets; 16 more have no published cost.',
+      'The indicative upgrade budget is £973k across 65 assets, 9 of them at the government average cost because the EPC gives none; 7 more have no cost estimate.',
       '28 assets are in the Act now tier.',
     ]);
   });

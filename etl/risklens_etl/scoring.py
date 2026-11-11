@@ -18,6 +18,9 @@ RULES_PATH = Path(__file__).resolve().parents[2] / "web" / "public" / "config" /
 
 Status = Literal["compliant", "fails_future", "fails_current", "no_epc"]
 Tier = Literal["low", "watch", "act"]
+# Where the indicative upgrade cost comes from: summed EPC recommendation costs, the configured fallback average,
+# no upgrade needed (compliant), or None when no cost is available.
+CostSource = Literal["recommendations", "fallback", "not_required"]
 
 
 class FloodInput(TypedDict):
@@ -55,6 +58,7 @@ class ScoreResult(TypedDict):
     scores: Scores
     tier: Tier
     upgrade_cost_mid_gbp: float | None
+    upgrade_cost_source: CostSource | None
 
 
 def load_rules(path: Path = RULES_PATH) -> dict[str, Any]:
@@ -140,16 +144,21 @@ def tier_for(total: int, tiers: dict[str, int]) -> Tier:
     return "low"
 
 
-def upgrade_cost(a: ScoreInput, status: Status, rules: dict[str, Any]) -> float | None:
-    """Indicative upgrade cost. 0 when no rule is failed; otherwise sum of rec cost_mid, then the config fallback, else None."""
+def upgrade_cost(a: ScoreInput, status: Status, rules: dict[str, Any]) -> tuple[float | None, CostSource | None]:
+    """Indicative upgrade cost and its source.
+
+    0 when no rule is failed; otherwise the sum of recommendation cost_mid, then the configured fallback, else None.
+    """
     if status == "compliant":
-        return 0.0
+        return 0.0, "not_required"
     if status in ("fails_current", "fails_future"):
         costs = [c for c in a["rec_costs_mid"] if c is not None]
         if costs:
-            return float(sum(costs))
+            return float(sum(costs)), "recommendations"
     fallback = rules["fallback_upgrade_cost_gbp"].get(a["use"])
-    return float(fallback) if isinstance(fallback, (int, float)) else None
+    if isinstance(fallback, (int, float)) and not isinstance(fallback, bool):
+        return float(fallback), "fallback"
+    return None, None
 
 
 def score_asset(a: ScoreInput, rules: dict[str, Any]) -> ScoreResult:
@@ -157,9 +166,11 @@ def score_asset(a: ScoreInput, rules: dict[str, Any]) -> ScoreResult:
     f = score_flood(a["flood"])
     d = score_data_quality(a, rules)
     total = total_score(c, f, d, rules["weights"])
+    cost, cost_source = upgrade_cost(a, compliance["status"], rules)
     return {
         "compliance": compliance,
         "scores": {"compliance": c, "flood": f, "data_quality": d, "total": total},
         "tier": tier_for(total, rules["tiers"]),
-        "upgrade_cost_mid_gbp": upgrade_cost(a, compliance["status"], rules),
+        "upgrade_cost_mid_gbp": cost,
+        "upgrade_cost_source": cost_source,
     }

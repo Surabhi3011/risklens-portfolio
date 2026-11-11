@@ -206,6 +206,7 @@ def main() -> None:
             "compliance": s["compliance"], "scores": s["scores"], "tier": s["tier"],
             "recommendations": top3,
             "upgrade_cost_mid_gbp": s["upgrade_cost_mid_gbp"],
+            "upgrade_cost_source": s["upgrade_cost_source"],
             "value_gbp": value, "value_source": value_source,
         }
         features.append({"type": "Feature", "geometry": {"type": "Point", "coordinates": [round(lon, 6), round(lat, 6)]},

@@ -35,6 +35,7 @@ function asset(over: {
     tier: 'low',
     recommendations: [],
     upgrade_cost_mid_gbp: over.cost === undefined ? 0 : over.cost,
+    upgrade_cost_source: over.cost === null ? null : (over.status ?? 'compliant') === 'compliant' ? 'not_required' : 'recommendations',
     value_gbp: over.value === undefined ? 100_000 : over.value,
     value_source: 'hpi',
   };
