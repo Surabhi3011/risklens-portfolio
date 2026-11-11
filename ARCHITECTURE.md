@@ -54,7 +54,7 @@ All sources are open data (OGL unless noted). Download raw files to `data/raw/<s
 | EA Risk of Flooding from Surface Water (RoFSW, NaFRA2) | Polygons, fetched the same way, clipped | `risk_band` (high/medium/low; no very low) | OGL |
 | UK House Price Index | Full CSV | region/LA code, date, average price by property type | OGL |
 | OS Open UPRN | CSV (GB) | UPRN, X/Y (EPSG:27700), lat, long; no LA field, so assigned by point-in-polygon | OGL |
-| ONS Postcode Directory (ONSPD) | CSV | pcds, lat, long, lsoa21cd, lad26cd (the LA column was `oslaua` in older releases), doterm | OGL; also contains Royal Mail, Gridlink, LPS, OS and ONS IPR (confirm the attribution wording from the user guide) |
+| ONS Postcode Directory (ONSPD) | CSV | pcds, lat, long, lsoa21cd, lad26cd (the LA column was `oslaua` in older releases), doterm | OGL; attribution must include the OS, Royal Mail and ONS statements (ONSPD User Guide §3); NI (BT) postcodes need a separate licence and are not used |
 | OpenStreetMap via OpenFreeMap | Vector tiles (runtime) | basemap | ODbL; show attribution |
 | ONS Local Authority District boundaries (May 2026, BGC) | GeoJSON for the demo LAs in EPSG:27700 (`00_fetch_raw.py`) | LAD26CD, LAD26NM | OGL; contains OS data |
 | EA flood WMS | Runtime map overlay only | — | OGL |
@@ -270,7 +270,7 @@ Show a summary: X matched by UPRN, Y by postcode, Z not covered.
 
 > Indicative screening only. Not a valuation, flood risk assessment or legal advice. Data may be out of date for individual properties.
 >
-> Contains public sector information licensed under the Open Government Licence v3.0, including EPC data (MHCLG), Environment Agency flood data, UK House Price Index (HM Land Registry, ONS), ONS Postcode Directory and OS Open UPRN (© Crown copyright and database right). Map data © OpenStreetMap contributors, tiles by OpenFreeMap.
+> Contains public sector information licensed under the Open Government Licence v3.0, including EPC data (MHCLG), Environment Agency flood data, UK House Price Index (HM Land Registry, ONS) and OS Open UPRN. Contains OS data © Crown copyright and database right 2026. Contains Royal Mail data © Royal Mail copyright and database right 2026. Source: Office for National Statistics licensed under the Open Government Licence v.3.0 (ONS Postcode Directory, local authority boundaries). Map data © OpenStreetMap contributors, tiles by OpenFreeMap.
 
 ## 8. Deployment
 

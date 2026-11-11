@@ -20,7 +20,7 @@ Record every raw download here: source page, direct URL, download date, release,
 ### ONS Postcode Directory (ONSPD)
 - Hub page: https://open-geography-portalx-ons.hub.arcgis.com/ (item `9e5a92a3cfb14dc7ad43d6ea7a7b8c7f`)
 - Direct URL: https://www.arcgis.com/sharing/rest/content/items/9e5a92a3cfb14dc7ad43d6ea7a7b8c7f/data
-- Licence: OGL v3.0. The listing notes that the product "contains Royal Mail, Gridlink, LPS (Northern Ireland), Ordnance Survey and ONS Intellectual Property Rights". TODO: confirm the exact attribution wording from `User Guide/ONSPD User Guide Aug 2026.pdf`.
+- Licence: OGL v3.0. The listing notes that the product "contains Royal Mail, Gridlink, LPS (Northern Ireland), Ordnance Survey and ONS Intellectual Property Rights". Required attribution (User Guide Aug 2026, §3): "Contains OS data © Crown copyright and database right [year]", "Contains Royal Mail data © Royal Mail copyright and database right [year]", "Source: Office for National Statistics licensed under the Open Government Licence v.3.0". Northern Ireland (BT) postcodes need a separate licence; only England postcodes are used.
 - Contents: `Data/ONSPD_AUG_2026_UK.csv` (1.5 GB unzipped) plus per-area files in `Data/multi_csv/`.
 - Schema note: the LA column is `lad26cd`, not `oslaua`. Postcode is `pcds`; coordinates are `lat` and `long`; LSOA is `lsoa21cd`.
 

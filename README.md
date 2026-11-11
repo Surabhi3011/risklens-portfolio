@@ -57,7 +57,7 @@ All data is open. Downloads are recorded with dates and checksums in [`data/raw/
 
 HM Land Registry Price Paid Data is deliberately **not** used, because its address fields carry third-party restrictions.
 
-> Contains public sector information licensed under the Open Government Licence v3.0, including EPC data (MHCLG), Environment Agency flood data, UK House Price Index (HM Land Registry, ONS), ONS Postcode Directory and OS Open UPRN (© Crown copyright and database right). Map data © OpenStreetMap contributors, tiles by OpenFreeMap.
+> Contains public sector information licensed under the Open Government Licence v3.0, including EPC data (MHCLG), Environment Agency flood data, UK House Price Index (HM Land Registry, ONS) and OS Open UPRN. Contains OS data © Crown copyright and database right 2026. Contains Royal Mail data © Royal Mail copyright and database right 2026. Source: Office for National Statistics licensed under the Open Government Licence v.3.0 (ONS Postcode Directory, local authority boundaries). Map data © OpenStreetMap contributors, tiles by OpenFreeMap.
 
 ## Running it yourself
 
@@ -137,4 +137,4 @@ This is **indicative screening only**. It is not a valuation, a flood risk asses
 
 ## Licence
 
-TODO: no code licence has been chosen yet. The data is used under the licences listed above.
+The code is released under the [MIT License](LICENSE). The data is not covered by it: each dataset keeps its own licence, listed above.

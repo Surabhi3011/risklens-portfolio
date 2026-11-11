@@ -1,6 +1,7 @@
 // Disclaimer and attribution text (ARCHITECTURE.md §7). Shared by the footer and the PDF export so they never drift.
-// TODO(attribution): ONSPD also carries Royal Mail / Gridlink / LPS IPR. Confirm the exact attribution wording
-// from the ONSPD Aug 2026 user guide and add it here and in ARCHITECTURE.md §7 (see data/raw/MANIFEST.md).
+// ONSPD attribution wording is from the ONSPD User Guide (Aug 2026), section 3 "Licensing Requirements": the OS,
+// Royal Mail and ONS statements must be displayed wherever the data is used. Only England postcodes are used, so
+// the separate Northern Ireland (BT) licence does not apply.
 
 export const DISCLAIMER =
   'Indicative screening only. Not a valuation, flood risk assessment or legal advice. Data may be out of date for ' +
@@ -8,8 +9,11 @@ export const DISCLAIMER =
   'subject to legislation.';
 
 export const ATTRIBUTION =
-  'Contains public sector information licensed under the Open Government Licence v3.0, including EPC data (MHCLG), ' +
-  'Environment Agency flood data, UK House Price Index (HM Land Registry, ONS), ONS Postcode Directory and OS Open ' +
-  'UPRN (© Crown copyright and database right). Map data © OpenStreetMap contributors, tiles by OpenFreeMap.';
+  'Contains public sector information licensed under the Open Government Licence v3.0, including EPC ' +
+  'data (MHCLG), Environment Agency flood data, UK House Price Index (HM Land Registry, ONS) and OS ' +
+  'Open UPRN. Contains OS data © Crown copyright and database right 2026. Contains Royal Mail data © ' +
+  'Royal Mail copyright and database right 2026. Source: Office for National Statistics licensed under ' +
+  'the Open Government Licence v.3.0 (ONS Postcode Directory, local authority boundaries). Map data © ' +
+  'OpenStreetMap contributors, tiles by OpenFreeMap.';
 
 export const OGL_URL = 'https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/';

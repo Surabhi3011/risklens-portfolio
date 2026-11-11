@@ -2,6 +2,7 @@
 name = "risklens-etl"
 version = "0.1.0"
 description = "RiskLens Portfolio ETL: enrich a property portfolio with open EPC, flood and HPI data"
+license = "MIT"
 requires-python = ">=3.11"
 dependencies = [
     "pandas>=2.2",
